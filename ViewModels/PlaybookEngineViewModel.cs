@@ -1,5 +1,4 @@
-﻿// In folder: ViewModels/PlaybookEngineViewModel.cs
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MyOptimizationTool.Core;
 using MyOptimizationTool.Models;
@@ -11,10 +10,9 @@ using WinRT.Interop;
 
 namespace MyOptimizationTool.ViewModels
 {
-    // SỬA LỖI Ở ĐÂY: Thêm từ khóa "partial"
     public partial class PlaybookEngineViewModel : ObservableObject
     {
-        private readonly PlaybookParserService _parserService = new();
+        private readonly PlaybookParserService _parserService;
 
         [ObservableProperty]
         private Playbook? currentPlaybook;
@@ -24,6 +22,12 @@ namespace MyOptimizationTool.ViewModels
 
         [ObservableProperty]
         private string statusText = "Vui lòng chọn một thư mục Playbook để bắt đầu.";
+
+        // Constructor với DI inject (thay vì new() trực tiếp)
+        public PlaybookEngineViewModel(PlaybookParserService parserService)
+        {
+            _parserService = parserService ?? throw new ArgumentNullException(nameof(parserService));
+        }
 
         [RelayCommand]
         private async Task LoadPlaybookAsync()
@@ -41,11 +45,23 @@ namespace MyOptimizationTool.ViewModels
             var folder = await folderPicker.PickSingleFolderAsync();
             if (folder != null)
             {
-                IsBusy = true;
-                StatusText = $"Đang phân tích playbook tại: {folder.Path}...";
-                CurrentPlaybook = await _parserService.ParsePlaybookAsync(folder.Path);
-                StatusText = $"Đã tải thành công Playbook '{CurrentPlaybook.Name}'. Sẵn sàng để áp dụng.";
-                IsBusy = false;
+                try
+                {
+                    IsBusy = true;
+                    StatusText = $"Đang phân tích playbook tại: {folder.Path}...";
+                    CurrentPlaybook = await _parserService.ParsePlaybookAsync(folder.Path);
+                    StatusText = $"Đã tải thành công Playbook '{CurrentPlaybook.Name}'. Sẵn sàng để áp dụng.";
+                }
+                catch (Exception ex)
+                {
+                    StatusText = $"Lỗi khi tải: {ex.Message}";
+                    Debug.WriteLine($"Load error: {ex}");
+                    // Có thể thêm dialog ở đây nếu cần
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
         }
 
@@ -54,22 +70,33 @@ namespace MyOptimizationTool.ViewModels
         {
             if (CurrentPlaybook == null || CurrentPlaybook.Tasks.Count == 0) return;
 
-            IsBusy = true;
-            int taskCount = 0;
-            foreach (var task in CurrentPlaybook.Tasks)
+            try
             {
-                taskCount++;
-                StatusText = $"Đang thực thi tác vụ {taskCount}/{CurrentPlaybook.Tasks.Count}: {task.Name}...";
-
-                Debug.WriteLine($"Executing Task: {task.Name}, Type: {task.Type}");
-                foreach (var param in task.Parameters)
+                IsBusy = true;
+                int taskCount = 0;
+                foreach (var task in CurrentPlaybook.Tasks)
                 {
-                    Debug.WriteLine($" -> {param.Key}: {param.Value}");
+                    taskCount++;
+                    StatusText = $"Đang thực thi tác vụ {taskCount}/{CurrentPlaybook.Tasks.Count}: {task.Name}...";
+
+                    Debug.WriteLine($"Executing Task: {task.Name}, Type: {task.Type}");
+                    foreach (var param in task.Parameters)
+                    {
+                        Debug.WriteLine($" -> {param.Key}: {param.Value}");
+                    }
+                    await Task.Delay(500);  // Placeholder - thay bằng real execution ở đây
                 }
-                await Task.Delay(500);
+                StatusText = "Hoàn tất áp dụng Playbook!";
             }
-            StatusText = "Hoàn tất áp dụng Playbook!";
-            IsBusy = false;
+            catch (Exception ex)
+            {
+                StatusText = $"Lỗi khi apply: {ex.Message}";
+                Debug.WriteLine($"Apply error: {ex}");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

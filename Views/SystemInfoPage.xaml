@@ -1,0 +1,97 @@
+<Page
+    x:Class="MyOptimizationTool.Views.SystemInfoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MyOptimizationTool.Models"
+    xmlns:converters="using:MyOptimizationTool.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Unloaded="Page_Unloaded">
+
+    <!-- 
+    SỬA LỖI Ở ĐÂY:
+    Tất cả nội dung của trang giờ đây được bọc trong một thẻ <Grid> duy nhất.
+    Thuộc tính Unloaded đã được đặt đúng vị trí bên trong thẻ <Page ...> ở trên.
+    -->
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Margin="24" Spacing="16">
+                <!-- PHẦN GIÁM SÁT REAL-TIME -->
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Giám sát Hệ thống" />
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <!-- CPU -->
+                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                        <Grid Width="90" Height="90">
+                            <ProgressRing IsIndeterminate="False" Maximum="100" Value="{Binding Metrics.CpuUsagePercentage, Mode=OneWay}"/>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16">
+                                <Run Text="{Binding Metrics.CpuUsagePercentageInt, Mode=OneWay}"/><Run Text="%"/>
+                            </TextBlock>
+                        </Grid>
+                        <TextBlock FontSize="12" HorizontalAlignment="Center">
+                            <Run Text="CPU ("/><Run Text="{Binding Metrics.ProcessCount, Mode=OneWay}"/><Run Text=" tiến trình)"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <!-- RAM -->
+                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                        <Grid Width="90" Height="90">
+                            <ProgressRing IsIndeterminate="False" Maximum="100" Value="{Binding Metrics.RamUsagePercentage, Mode=OneWay}"/>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16">
+                                <Run Text="{Binding Metrics.RamUsagePercentage, Mode=OneWay}"/><Run Text="%"/>
+                            </TextBlock>
+                        </Grid>
+                        <TextBlock FontSize="12" HorizontalAlignment="Center">
+                            <Run Text="RAM ("/><Run Text="{Binding Metrics.RamUsedGB, Mode=OneWay}"/><Run Text="/"/><Run Text="{Binding Metrics.RamTotalGB, Mode=OneWay}"/><Run Text=" GB)"/>
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- PHẦN Ổ ĐĨA -->
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Ổ đĩa" Margin="0,16,0,0"/>
+                <GridView ItemsSource="{Binding Metrics.Disks, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="models:DiskInfo">
+                            <StackPanel Spacing="8" HorizontalAlignment="Center" Margin="0,0,16,16">
+                                <Grid Width="90" Height="90">
+                                    <ProgressRing IsIndeterminate="False" Maximum="100" Value="{Binding PercentUsed, Mode=OneWay}"/>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16">
+                                        <Run Text="{Binding PercentUsed, Mode=OneWay}"/><Run Text="%"/>
+                                    </TextBlock>
+                                </Grid>
+                                <TextBlock FontSize="12" HorizontalAlignment="Center">
+                                    <Run Text="{x:Bind Name}"/><Run Text=" ("/><Run Text="{x:Bind UsedSpaceGBFormatted}"/><Run Text="/"/><Run Text="{x:Bind TotalSizeGBFormatted}"/><Run Text=" GB)"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+
+                <!-- PHẦN THÔNG SỐ HỆ THỐNG -->
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Thông số Hệ thống" Margin="0,16,0,0"/>
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Hệ điều hành:" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Specs.OsVersion, Mode=OneWay}" Margin="12,0,0,0"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="CPU:" FontWeight="SemiBold"/>
+                    <!-- SỬA LỖI Ở ĐÂY: Đổi "CpuName" thành "Cpu" -->
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Specs.Cpu, Mode=OneWay}" Margin="12,0,0,0" TextWrapping="Wrap"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Bo mạch chủ:" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Specs.Motherboard, Mode=OneWay}" Margin="12,0,0,0" TextWrapping="Wrap"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="GPU(s):" FontWeight="SemiBold" VerticalAlignment="Top"/>
+                    <!-- SỬA LỖI Ở ĐÂY: Đổi "GpuNames" thành "Gpus" -->
+                    <ItemsRepeater Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Specs.Gpus, Mode=OneWay}" Margin="12,0,0,0">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Margin="0,0,0,4"/>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

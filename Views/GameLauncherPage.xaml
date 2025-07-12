@@ -1,0 +1,56 @@
+<Page
+    x:Name="GameLauncherPageRoot"
+    x:Class="MyOptimizationTool.Views.GameLauncherPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:MyOptimizationTool.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MyOptimizationTool.Models"
+    xmlns:converters="using:MyOptimizationTool.Converters" 
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <!-- 
+        SỬA LỖI Ở ĐÂY:
+        Đã đổi tiền tố từ "local" thành "converters" để chỉ đến đúng namespace
+        nơi chứa file BooleanToVisibilityConverter.cs
+        -->
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Page.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <CommandBar Grid.Row="0" DefaultLabelPosition="Right" Background="Transparent">
+            <AppBarButton Command="{Binding AddGameCommand}" Icon="Add" Label="Thêm Game" />
+        </CommandBar>
+
+        <Grid Grid.Row="0" Grid.RowSpan="2" 
+              Background="#80000000"
+              Visibility="{Binding IsOptimizing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                <ProgressRing IsActive="True" Width="48" Height="48"/>
+                <TextBlock Text="Đang tối ưu hóa trước khi khởi chạy..." FontSize="16"/>
+            </StackPanel>
+        </Grid>
+
+        <GridView Grid.Row="1" 
+                  ItemsSource="{Binding Games, Mode=OneWay}"
+                  SelectionMode="None" IsItemClickEnabled="False"
+                  Padding="24,0,24,24">
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="280" Height="160" Background="{ThemeResource LayerFillColorDefaultBrush}"
+                          CornerRadius="8" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                        <StackPanel VerticalAlignment="Bottom" Padding="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                            <Button Command="{Binding DataContext.LaunchGameCommand, ElementName=GameLauncherPageRoot}"
+                                    CommandParameter="{Binding}"
+                                    Content="Khởi chạy" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+    </Grid>
+</Page>

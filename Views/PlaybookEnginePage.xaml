@@ -1,0 +1,76 @@
+<Page
+    x:Class="MyOptimizationTool.Views.PlaybookEnginePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:MyOptimizationTool.Models"
+    xmlns:converters="using:MyOptimizationTool.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:BooleanToInvertedBooleanConverter x:Key="BooleanToInvertedBooleanConverter"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    </Page.Resources>
+
+    <Grid RowDefinitions="Auto,*" Padding="24">
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="Playbook Engine" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock Text="Tải và áp dụng các kịch bản tối ưu hóa được định cấu hình sẵn." Opacity="0.8"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+            <CommandBar Grid.Row="0" DefaultLabelPosition="Right" Background="Transparent">
+                <AppBarButton Label="Tải Playbook" Command="{Binding LoadPlaybookCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanToInvertedBooleanConverter}}">
+                    <AppBarButton.Icon>
+                        <SymbolIcon Symbol="Folder"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="Áp dụng Playbook" Command="{Binding ApplyPlaybookCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanToInvertedBooleanConverter}}">
+                    <AppBarButton.Icon>
+                        <SymbolIcon Symbol="Play"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </CommandBar>
+
+            <Grid Grid.Row="1" Margin="0,12,0,0">
+                <ScrollViewer>
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="{Binding StatusText, Mode=OneWay}" FontWeight="SemiBold"/>
+                        <ProgressBar IsIndeterminate="{Binding IsBusy, Mode=OneWay}"/>
+
+                        <Grid Visibility="{Binding CurrentPlaybook, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding CurrentPlaybook.Name, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <TextBlock>
+                                    <Run Text="Tác giả: "/><Run Text="{Binding CurrentPlaybook.Author, Mode=OneWay}" FontWeight="SemiBold"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding CurrentPlaybook.Description, Mode=OneWay}" FontStyle="Italic" Opacity="0.8" Margin="0,4,0,0"/>
+
+                                <TextBlock Margin="0,16,0,0">
+                                    <Run Text="Số trang tùy chọn đã tìm thấy:" FontWeight="SemiBold"/>
+                                    <Run Text="{Binding CurrentPlaybook.FeaturePages.Count, Mode=OneWay}"/>
+                                </TextBlock>
+
+                                <TextBlock Text="Các tác vụ sẽ được thực hiện:" Style="{ThemeResource BodyStrongTextBlockStyle}" Margin="0,16,0,8"/>
+                                <ListView ItemsSource="{Binding CurrentPlaybook.Tasks, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Spacing="4" Margin="0,4">
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                                <TextBlock FontSize="12" Opacity="0.7">
+                                                    <Run Text="Loại:"/><Run Text="{Binding Type}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MyOptimizationTool (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MyOptimizationTool (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+<Page
+    x:Class="MyOptimizationTool.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ScrollViewer>
+        <StackPanel Spacing="24" Padding="24">
+            <InfoBar Title="{Binding Info.UpdateMessageTitle}" Message="{Binding Info.UpdateMessageContent}" Severity="Informational" IsOpen="True" IsClosable="False"/>
+            <StackPanel Spacing="8">
+                <TextBlock Text="Lịch sử cập nhật" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                <Border Background="{ThemeResource LayerFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <ItemsRepeater ItemsSource="{Binding Info.Changelog}">
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,16">
+                                    <TextBlock Text="{Binding Version}" FontWeight="SemiBold"/>
+                                    <ItemsRepeater ItemsSource="{Binding Changes}" Margin="12,4,0,0">
+                                        <ItemsRepeater.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock><Run Text="• "/><Run Text="{Binding}"/></TextBlock>
+                                            </DataTemplate>
+                                        </ItemsRepeater.ItemTemplate>
+                                    </ItemsRepeater>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </Border>
+            </StackPanel>
+            <StackPanel Spacing="8">
+                <TextBlock Text="Thông tin" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                <StackPanel Spacing="4" Margin="4,0,0,0">
+                    <TextBlock><Run Text="Phiên bản:" FontWeight="SemiBold"/><Run Text="{Binding Info.AppVersion}"/></TextBlock>
+                    <TextBlock><Run Text="Tác giả:" FontWeight="SemiBold"/><Run Text="{Binding Info.Author}"/></TextBlock>
+                    <TextBlock Opacity="0.8"><Run Text="{Binding Info.CopyrightNotice}"/></TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

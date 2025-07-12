@@ -1,0 +1,45 @@
+<Page
+    x:Class="MyOptimizationTool.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <NavigationView x:Name="NavView"
+                    PaneDisplayMode="LeftCompact"
+                    IsSettingsVisible="True"
+                    ItemInvoked="NavView_ItemInvoked">
+        <NavigationView.MenuItems>
+            <!-- Nhóm Chung -->
+            <NavigationViewItem Content="Dashboard" Icon="Home" Tag="DashboardPage"/>
+            <NavigationViewItem Content="System Info" Icon="ContactInfo" Tag="SystemInfoPage"/>
+
+            <NavigationViewItemSeparator/>
+
+            <!-- Nhóm Tối ưu hóa -->
+            <NavigationViewItemHeader Content="Optimization"/>
+
+            <!-- THÊM MỤC MỚI Ở ĐÂY -->
+            <NavigationViewItem Content="Playbook Engine" Tag="PlaybookEnginePage">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph=""/>
+                    <!-- Biểu tượng quyển sách -->
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+
+            <NavigationViewItem Content="System Tweaks" Icon="Repair" Tag="SystemTweakerPage"/>
+            <NavigationViewItem Content="System Cleanup" Icon="Delete" Tag="CleanupPage"/>
+            <NavigationViewItem Content="Game Launcher" Tag="GameLauncherPage">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph=""/>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+
+        </NavigationView.MenuItems>
+
+        <!-- Frame để hiển thị nội dung các trang -->
+        <Frame x:Name="ContentFrame" Padding="12"/>
+    </NavigationView>
+</Page>

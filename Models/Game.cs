@@ -1,0 +1,19 @@
+﻿// In folder: Models/Game.cs
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace MyOptimizationTool.Models
+{
+    public class Game : INotifyPropertyChanged
+    {
+        public string Name { get; set; } = string.Empty;
+        public string ExecutablePath { get; set; } = string.Empty;
+        public string? ImagePath { get; set; } // Đường dẫn tới ảnh bìa của game (tùy chọn)
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}

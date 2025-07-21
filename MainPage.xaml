@@ -15,20 +15,12 @@
             <!-- Nhóm Chung -->
             <NavigationViewItem Content="Dashboard" Icon="Home" Tag="DashboardPage"/>
             <NavigationViewItem Content="System Info" Icon="ContactInfo" Tag="SystemInfoPage"/>
-
             <NavigationViewItemSeparator/>
 
             <!-- Nhóm Tối ưu hóa -->
             <NavigationViewItemHeader Content="Optimization"/>
 
             <!-- THÊM MỤC MỚI Ở ĐÂY -->
-            <NavigationViewItem Content="Playbook Engine" Tag="PlaybookEnginePage">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph=""/>
-                    <!-- Biểu tượng quyển sách -->
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-
             <NavigationViewItem Content="System Tweaks" Icon="Repair" Tag="SystemTweakerPage"/>
             <NavigationViewItem Content="System Cleanup" Icon="Delete" Tag="CleanupPage"/>
             <NavigationViewItem Content="Game Launcher" Tag="GameLauncherPage">

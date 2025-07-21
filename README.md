@@ -70,7 +70,7 @@ MyOptimizationTool/
 
 ## 📄 Giấy phép
 
-Dự án này được cấp phép theo Giấy phép MIT. Xem file `LICENSE.txt` để biết chi tiết.
+Dự án này được cấp phép theo Giấy phép MIT.
 
 ## 👤 Tác giả
 

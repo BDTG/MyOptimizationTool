@@ -4,8 +4,6 @@
 
 Một công cụ mạnh mẽ và hiện đại được xây dựng bằng C# và WinUI 3 để tối ưu hóa và tinh chỉnh Windows 11.
 
-![MyOptimizationTool Screenshot](https://raw.githubusercontent.com/BDTG/MyOptimizationTool/main/screenshot.png)
-> **Lưu ý:** Bạn hãy chụp một bức ảnh đẹp của ứng dụng, đặt tên là `screenshot.png`, thêm nó vào thư mục gốc của dự án và push lên GitHub để hình ảnh này hiển thị.
 
 ## 🚀 Giới thiệu
 

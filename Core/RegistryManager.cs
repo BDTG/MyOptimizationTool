@@ -12,12 +12,27 @@ namespace MyOptimizationTool.Core
         {
             try
             {
+                keyPath = keyPath.Replace("HKCU", "HKEY_CURRENT_USER").Replace("HKLM", "HKEY_LOCAL_MACHINE");
                 Registry.SetValue(keyPath, valueName, value, valueKind);
             }
             catch (Exception ex)
             {
-                // SỬA LỖI: Sử dụng biến 'ex' để ghi log
                 Debug.WriteLine($"Error setting registry value at '{keyPath}': {ex.Message}");
+            }
+        }
+        public void DeleteRegistryValue(string keyPath, string valueName)
+        {
+            try
+            {
+                keyPath = keyPath.Replace("HKCU", "HKEY_CURRENT_USER").Replace("HKLM", "HKEY_LOCAL_MACHINE");
+                using (var key = Registry.CurrentUser.OpenSubKey(keyPath, true) ?? Registry.LocalMachine.OpenSubKey(keyPath, true))
+                {
+                    key?.DeleteValue(valueName, false); // false = không ném lỗi nếu không tìm thấy
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error deleting registry value at '{keyPath}': {ex.Message}");
             }
         }
 

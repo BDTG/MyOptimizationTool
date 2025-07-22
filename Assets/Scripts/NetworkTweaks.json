@@ -29,8 +29,29 @@
       "dataType": "DWord"
     },
     {
-      "type": "script",
-      "scriptContent": "@echo off\r\n\r\necho Setting network adapter driver registry key...\r\nfor /f \"usebackq\" %%a in (`powershell -NonI -NoP -C \"(Get-CimInstance Win32_NetworkAdapter).PNPDeviceID | sls 'PCI\\\\VEN_'\"`) do (\r\n\tfor /f \"tokens=3\" %%b in ('reg query \"HKLM\\SYSTEM\\CurrentControlSet\\Enum\\%%a\" /v \"Driver\"') do ( \r\n        set \"netKey=HKLM\\SYSTEM\\CurrentControlSet\\Control\\Class\\%%b\"\r\n    ) > nul 2>&1\r\n)\r\n\r\necho Configuring network adapter settings...\r\nfor %%a in (\r\n    \"AutoDisableGigabit\"\r\n    \"ApCompatMode\"\r\n    \"SipsEnabled\"\r\n    \"ReduceSpeedOnPowerDown\"\r\n    \"DMACoalescing\"\r\n) do (\r\n    for /f %%b in ('reg query \"%netKey%\" /v \"%%~a\" ^| findstr \"HKEY\"') do (\r\n        reg add \"%netKey%\" /v \"%%~a\" /t REG_SZ /d \"0\" /f > nul\r\n    )\r\n    for /f %%b in ('reg query \"%netKey%\" /v \"*%%~a\" ^| findstr \"HKEY\"') do (\r\n        reg add \"%netKey%\" /v \"*%%~a\" /t REG_SZ /d \"0\" /f > nul\r\n    )\r\n) > nul 2>&1\r\n\r\necho Finished network script."
+      "type": "networkAdapterRegistry",
+      "valueName": "AutoDisableGigabit",
+      "data": "0"
+    },
+    {
+      "type": "networkAdapterRegistry",
+      "valueName": "ApCompatMode",
+      "data": "0"
+    },
+    {
+      "type": "networkAdapterRegistry",
+      "valueName": "SipsEnabled",
+      "data": "0"
+    },
+    {
+      "type": "networkAdapterRegistry",
+      "valueName": "ReduceSpeedOnPowerDown",
+      "data": "0"
+    },
+    {
+      "type": "networkAdapterRegistry",
+      "valueName": "DMACoalescing",
+      "data": "0"
     }
   ]
 }

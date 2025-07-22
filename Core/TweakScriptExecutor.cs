@@ -12,6 +12,7 @@ namespace MyOptimizationTool.Core
     public class TweakScriptExecutor
     {
         private readonly RegistryManager _regManager = new();
+        private readonly NetworkService _netService = new();
 
         // Phương thức này đọc và thực thi một file kịch bản JSON
         public async Task ExecuteFromFileAsync(string scriptFileName)
@@ -30,49 +31,77 @@ namespace MyOptimizationTool.Core
 
             foreach (var tweak in scriptFile.Tweaks)
             {
-                if (tweak.Type == "registry" && tweak.Path != null && tweak.ValueName != null && tweak.Data != null)
+                switch (tweak.Type)
                 {
-                    // Chuyển đổi DataType từ chuỗi sang Enum
-                    var valueKind = tweak.DataType?.ToUpper() == "DWORD" ? RegistryValueKind.DWord : RegistryValueKind.String;
+                    case "registry":
+                        if (tweak.Path != null && tweak.ValueName != null && tweak.Data != null)
+                        {
+                            var valueKind = tweak.DataType?.ToUpper() == "DWORD" ? RegistryValueKind.DWord : RegistryValueKind.String;
+                            object valueData = valueKind == RegistryValueKind.DWord ? int.Parse(tweak.Data.ToString()!) : tweak.Data.ToString()!;
+                            _regManager.SetRegistryValue(tweak.Path, tweak.ValueName, valueData, valueKind);
+                        }
+                        break;
 
-                    // Chuyển đổi Data sang đúng kiểu int nếu là DWord
-                    object valueData = valueKind == RegistryValueKind.DWord
-                        ? int.Parse(tweak.Data.ToString()!)
-                        : tweak.Data.ToString()!;
+                    case "script":
+                        if (tweak.ScriptContent != null)
+                        {
+                            await ExecuteBatchScriptAsync(tweak.ScriptContent);
+                        }
+                        break;
 
-                    _regManager.SetRegistryValue(tweak.Path, tweak.ValueName, valueData, valueKind);
-                }
-                else if (tweak.Type == "script" && tweak.ScriptContent != null)
-                {
-                    await ExecuteBatchScriptAsync(tweak.ScriptContent);
+                    case "networkAdapterRegistry":
+                        ExecuteNetworkAdapterTweak(tweak);
+                        break;
+                }   
                 }
             }
+
+            // Phương thức này thực thi kịch bản khôi phục mạng mặc định
+            public Task ExecuteNetworkResetScriptAsync()
+         {
+            string scriptContent = @"
+            @echo off
+            echo Resetting network settings to Windows defaults...
+
+            rem Reset TCP/IP and Winsock
+            (
+            netsh int ip reset
+            netsh interface ipv4 reset
+            netsh interface ipv6 reset
+            netsh interface tcp reset
+            netsh winsock reset
+            ) > nul
+
+            echo Reinstalling network drivers...
+            rem Uninstalls all physical network adapters, then rescans to let Windows reinstall them
+            PowerShell -NoP -C ""foreach ($dev in Get-PnpDevice -Class Net -Status 'OK' | Where-Object { $_.InstanceId -like 'PCI*' -or $_.InstanceId -like 'USB*' }) { pnputil /remove-device $dev.InstanceId }"" > nul
+            pnputil /scan-devices > nul
+
+            echo Finished, please reboot your device for changes to apply.
+            ";
+            return ExecuteBatchScriptAsync(scriptContent);
         }
 
-        // Phương thức này thực thi kịch bản khôi phục mạng mặc định
-        public Task ExecuteNetworkResetScriptAsync()
+        // Phương thức mới để thực thi tinh chỉnh card mạng
+        private void ExecuteNetworkAdapterTweak(TweakScriptItem tweak)
         {
-            string scriptContent = @"
-@echo off
-echo Resetting network settings to Windows defaults...
+            var adapterPath = _netService.GetActiveNetworkAdapterRegistryPath();
+            if (adapterPath == null)
+            {
+                Debug.WriteLine("Could not find active network adapter registry path. Skipping tweak.");
+                return;
+            }
 
-rem Reset TCP/IP and Winsock
-(
-    netsh int ip reset
-    netsh interface ipv4 reset
-    netsh interface ipv6 reset
-    netsh interface tcp reset
-    netsh winsock reset
-) > nul
+            var valueName = tweak.ValueName;
+            var data = tweak.Data;
 
-echo Reinstalling network drivers...
-rem Uninstalls all physical network adapters, then rescans to let Windows reinstall them
-PowerShell -NoP -C ""foreach ($dev in Get-PnpDevice -Class Net -Status 'OK' | Where-Object { $_.InstanceId -like 'PCI*' -or $_.InstanceId -like 'USB*' }) { pnputil /remove-device $dev.InstanceId }"" > nul
-pnputil /scan-devices > nul
+            if (valueName == null || data == null) return;
 
-echo Finished, please reboot your device for changes to apply.
-";
-            return ExecuteBatchScriptAsync(scriptContent);
+            // Mặc định là REG_SZ vì đó là kiểu dữ liệu trong script batch gốc
+            _regManager.SetRegistryValue(adapterPath, valueName, data.ToString()!, RegistryValueKind.String);
+            _regManager.SetRegistryValue(adapterPath, $"*{valueName}", data.ToString()!, RegistryValueKind.String);
+
+            Debug.WriteLine($"Applied Network Tweak: {valueName} = {data} to {adapterPath}");
         }
 
         // Phương thức chung để chạy một đoạn kịch bản batch
@@ -87,14 +116,14 @@ echo Finished, please reboot your device for changes to apply.
                 {
                     UseShellExecute = true,
                     CreateNoWindow = true,
-                    Verb = "runas" // Yêu cầu quyền Administrator
+                    Verb = "runas"
                 };
 
                 try
                 {
                     using (var process = Process.Start(startInfo))
                     {
-                        process?.WaitForExit(30000); // Chờ tối đa 30 giây
+                        process?.WaitForExit(30000);
                     }
                 }
                 catch (Exception ex)
@@ -103,7 +132,7 @@ echo Finished, please reboot your device for changes to apply.
                 }
                 finally
                 {
-                    File.Delete(tempPath); // Luôn dọn dẹp file tạm sau khi chạy
+                    File.Delete(tempPath);
                 }
             });
         }

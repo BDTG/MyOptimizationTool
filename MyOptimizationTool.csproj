@@ -14,7 +14,11 @@
 	<IsTrimmable>false</IsTrimmable>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\Scripts\NetworkTweaks.json" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Views\DashboardPage.xaml" />
+    <None Remove="Views\NetworkTweakPage.xaml" />
     <None Remove="Views\PlaybookEnginePage.xaml" />
     <None Remove="Views\SettingsPage.xaml" />
     <None Remove="Views\SystemCleanupPage.xaml" />
@@ -64,6 +68,9 @@
     <None Update="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <Page Update="Views\NetworkTweakPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\PlaybookEnginePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

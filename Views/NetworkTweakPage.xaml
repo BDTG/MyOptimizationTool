@@ -1,0 +1,42 @@
+<Page
+    x:Class="MyOptimizationTool.Views.NetworkTweakPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:MyOptimizationTool.Converters"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:BooleanToInvertedBooleanConverter x:Key="BooleanToInvertedBooleanConverter"/>
+    </Page.Resources>
+
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="24" MaxWidth="500">
+        <TextBlock Text="Tối ưu Mạng" Style="{ThemeResource TitleTextBlockStyle}" HorizontalAlignment="Center"/>
+        <TextBlock Text="Thao tác này sẽ áp dụng một loạt các tinh chỉnh cho registry và driver card mạng để cải thiện hiệu năng và giảm độ trễ. Nhấn nút bên dưới để bắt đầu." 
+                   TextWrapping="Wrap" TextAlignment="Center"/>
+
+        <ProgressBar IsIndeterminate="{Binding IsBusy, Mode=OneWay}" Margin="0,12"/>
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+
+            <!-- Nút Khôi phục (không có màu nhấn) -->
+            <Button Grid.Column="0" 
+                    Command="{Binding ResetCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanToInvertedBooleanConverter}}"
+                    HorizontalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <SymbolIcon Symbol="Undo"/>
+                    <TextBlock Text="Khôi phục Mặc định"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="1" 
+                    Command="{Binding OptimizeCommand}" 
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource BooleanToInvertedBooleanConverter}}"
+                    Style="{ThemeResource AccentButtonStyle}" HorizontalAlignment="Stretch">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <SymbolIcon Symbol="Sync"/>
+                    <TextBlock Text="Bắt đầu Tối ưu"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+        <TextBlock Text="{Binding StatusText, Mode=OneWay}" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+    </StackPanel>
+</Page>

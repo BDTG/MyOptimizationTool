@@ -10,20 +10,18 @@ namespace MyOptimizationTool.ViewModels
     public class SystemTweakerViewModel
     {
         private readonly TweakManager tweakManager;
-
         public ObservableCollection<SystemTweak> Tweaks { get; set; }
-
         public SystemTweakerViewModel()
         {
             tweakManager = new TweakManager();
             Tweaks = new ObservableCollection<SystemTweak>();
             LoadTweaks();
         }
-
         private void LoadTweaks()
         {
             var tweakList = new[]
             {
+
                 // --- TWEAK CŨ (REGISTRY) ---
                 new SystemTweak
                 {

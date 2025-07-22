@@ -16,13 +16,13 @@ namespace MyOptimizationTool.ViewModels
             Info = new DashboardInfo
             {
                 // THAY ĐỔI 1: Cập nhật phiên bản ứng dụng
-                AppVersion = "Phiên bản 1.2.0-beta",
-                Author = "BDTG",
-                CopyrightNotice = $"Bản quyền © {DateTime.Now.Year} BDTG. RESMOUSE.",
+                AppVersion = "Phiên bản 1.3.0-beta",
+                Author = "Tên của bạn",
+                CopyrightNotice = $"Bản quyền © {DateTime.Now.Year} Tên của bạn. Đã đăng ký bản quyền.",
 
                 // THAY ĐỔI 2: Cập nhật thông báo mới
-                UpdateMessageTitle = "Giới thiệu Playbook Engine!",
-                UpdateMessageContent = "Nền tảng cho các kịch bản tối ưu hóa tùy chỉnh đã được xây dựng. Giờ đây ứng dụng có thể đọc và phân tích các playbook phức tạp.",
+                UpdateMessageTitle = "Giới thiệu Chức năng Tối ưu Mạng!",
+                UpdateMessageContent = "Một module mới cho phép áp dụng các tinh chỉnh mạng phức tạp thông qua kịch bản, đồng thời cung cấp tùy chọn khôi phục về mặc định một cách an toàn.",
 
                 // THAY ĐỔI 3: Thêm mục changelog mới nhất vào đầu danh sách
                 Changelog = new List<ChangelogEntry>
@@ -30,24 +30,30 @@ namespace MyOptimizationTool.ViewModels
                     // === MỤC CHANGELOG MỚI ===
                     new ChangelogEntry
                     {
-                        Version = "v1.2.0-beta (Hiện tại)",
+                        Version = "v1.3.0-beta (Hiện tại)",
                         Changes = new List<string>
-                        {   
-                            "TOOL 2 mét",
-                            "✨ [Mới] Xây dựng nền tảng cho Playbook Engine, cho phép đọc và phân tích các kịch bản tối ưu hóa.",
-                            "🚀 [Cải tiến] Nâng cấp bộ phân tích Playbook để hỗ trợ cấu trúc file cấu hình theo định dạng XML.",
-                            "🚀 [Cải tiến] Thêm khả năng đọc các tác vụ từ file .yml.",
+                        {
+                            "✨ [Mới] Thêm trang 'Tối ưu Mạng' với chức năng Áp dụng Tinh chỉnh và Khôi phục Mặc định.",
+                            "🚀 [Cải tiến] Xây dựng 'Tweak Script Engine' có khả năng đọc và thực thi các tác vụ (registry, batch script) từ file kịch bản .json bên ngoài.",
+                            "🚀 [Cải tiến] Cấu trúc hóa các kịch bản tối ưu, giúp dễ dàng cập nhật và mở rộng mà không cần build lại ứng dụng."
                         }
                     },
                     // === CÁC MỤC CŨ ===
                     new ChangelogEntry
                     {
+                        Version = "v1.2.0-beta",
+                        Changes = new List<string>
+                        {
+                            "Xây dựng nền tảng ban đầu cho Playbook Engine.",
+                            "Nâng cấp bộ phân tích để hỗ trợ cấu trúc file XML/YAML."
+                        }
+                    },
+                    new ChangelogEntry
+                    {
                         Version = "v1.1.0-beta",
                         Changes = new List<string>
                         {
-                            "Thêm chức năng Dọn dẹp Hệ thống (System Cleanup).",
-                            "Thêm màn hình đăng nhập và hệ thống kích hoạt bản quyền.",
-                            "Thêm trang Cài đặt (Settings) với tùy chọn thay đổi giao diện.",
+                            "Thêm chức năng Dọn dẹp Hệ thống, Đăng nhập và Cài đặt Giao diện.",
                             "Sửa lỗi treo ứng dụng (deadlock) ở trang Giám sát Hệ thống.",
                             "Nâng cấp dự án lên nền tảng .NET 9.0."
                         }
@@ -57,9 +63,7 @@ namespace MyOptimizationTool.ViewModels
                         Version = "v1.0.0-beta",
                         Changes = new List<string>
                         {
-                            "Thêm chức năng Game Launcher.",
-                            "Thêm chức năng Registry Tweaker.",
-                            "Thêm chức năng giám sát hệ thống (System Info) ban đầu."
+                            "Thêm chức năng Game Launcher, Registry Tweaker, System Info."
                         }
                     },
                     new ChangelogEntry

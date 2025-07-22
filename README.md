@@ -12,9 +12,10 @@ Một công cụ mạnh mẽ và hiện đại được xây dựng bằng C# v�
 ## ✨ Các Tính năng Chính
 
 *   **🖥️ Giám sát Hệ thống:** Theo dõi việc sử dụng CPU, RAM, và dung lượng ổ đĩa theo thời gian thực với giao diện đồng hồ tròn trực quan.
-*   **🛠️ Tinh chỉnh Hệ thống (System Tweaks):** Cung cấp một danh sách các tinh chỉnh phổ biến cho Registry và PowerShell, cho phép người dùng bật/tắt dễ dàng qua các công tắc.
-*   **🗑️ Dọn dẹp Rác (System Cleanup):** Quét và xóa các file tạm thời, file rác từ các thư mục hệ thống để giải phóng dung lượng.
-*   **🎮 Trình khởi chạy Game (Game Launcher):** Cho phép người dùng thêm các game của mình và khởi chạy chúng sau một quá trình "tối ưu hóa" giả lập.
+*   **🛠️ Tinh chỉnh Hệ thống (System Tweaks):** Cung cấp một danh sách các tinh chỉnh phổ biến cho Registry và PowerShell.
+*   **🗑️ Dọn dẹp Rác (System Cleanup):** Quét và xóa các file tạm thời, file rác từ các thư mục hệ thống.
+*   **🎮 Trình khởi chạy Game (Game Launcher):** Cho phép người dùng thêm các game của mình và khởi chạy chúng.
+*   **🌐 Tối ưu Mạng (Network Tweak):** Áp dụng các tinh chỉnh mạng nâng cao từ kịch bản JSON, với tùy chọn khôi phục về mặc định một cách an toàn.
 *   **⚙️ Cài đặt Giao diện:** Dễ dàng chuyển đổi giữa các giao diện Sáng (Light), Tối (Dark), hoặc theo mặc định của hệ thống.
 *   **📊 Dashboard Chuyên nghiệp:** Một trang chào mừng hiển thị thông tin phiên bản và lịch sử cập nhật (changelog) của ứng dụng.
 
@@ -52,6 +53,7 @@ Dự án tuân thủ theo kiến trúc MVVM để đảm bảo sự phân tách 
 
 ```
 MyOptimizationTool/
+├── Assets/        # Chứa các tài nguyên như file kịch bản
 ├── Converters/    # Các lớp chuyển đổi dữ liệu cho XAML Binding
 ├── Core/          # Các lớp logic nghiệp vụ cốt lõi (services)
 ├── Models/        # Các lớp đối tượng (POCOs)
@@ -63,7 +65,6 @@ MyOptimizationTool/
 ## 🗺️ Lộ trình Phát triển (Roadmap)
 
 *   [ ] Hoàn thiện logic thực thi cho chức năng "System Tweaks".
-*   [ ] Thêm nhiều tùy chọn dọn dẹp hơn cho "System Cleanup".
 *   [ ] Xây dựng lại "Playbook Engine" một cách ổn định.
 *   [ ] Thêm chức năng sao lưu/khôi phục Registry trước khi thực hiện tinh chỉnh.
 *   [ ] Thêm lại hệ thống bản quyền và kích hoạt.

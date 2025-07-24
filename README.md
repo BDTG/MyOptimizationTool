@@ -71,8 +71,7 @@ MyOptimizationTool/
 ├── Models/         # Các lớp đối tượng dữ liệu (POCOs) và ObservableObjects
 ├── Services/       # Các dịch vụ phức tạp, chuyên biệt (SystemInfoService)
 ├── ViewModels/     # Chứa logic và trạng thái cho các trang (Pages)
-└── Views/          # Các file giao diện người dùng (XAML Pages & Windows)```
----
+└── Views/          # Các file giao diện người dùng (XAML Pages & Windows)
 
 
 ## 🗺️ Lộ trình Phát triển (Roadmap)

@@ -63,15 +63,14 @@ Một công cụ mạnh mẽ và hiện đại được xây dựng bằng C# v�
 
 Dự án được tổ chức theo kiến trúc MVVM để đảm bảo sự phân tách rõ ràng giữa giao diện (View), logic hiển thị (ViewModel) và logic nghiệp vụ (Core/Services).
 
-```text
 MyOptimizationTool/
-├── Assets/         # Tài nguyên tĩnh (kịch bản JSON, icon...)
-├── Converters/     # Lớp chuyển đổi dữ liệu cho XAML Binding
-├── Core/           # Logic nghiệp vụ cốt lõi (TweakManager, CleanupService...)
-├── Models/         # Các lớp đối tượng dữ liệu (POCOs) và ObservableObjects
-├── Services/       # Các dịch vụ phức tạp, chuyên biệt (SystemInfoService)
-├── ViewModels/     # Chứa logic và trạng thái cho các trang (Pages)
-└── Views/          # Các file giao diện người dùng (XAML Pages & Windows)
+├── Assets/         # Tài nguyên (icon, JSON, file cấu hình)
+├── Converters/     # Value converters cho XAML binding
+├── Core/           # Logic nghiệp vụ chính (TweakManager, CleanupService...)
+├── Models/         # Các lớp dữ liệu (POCOs, ObservableObjects)
+├── Services/       # Dịch vụ hệ thống (SystemInfoService, RegistryService...)
+├── ViewModels/     # Logic và trạng thái cho các View
+└── Views/          # Giao diện người dùng (XAML Pages & Windows)
 
 
 ## 🗺️ Lộ trình Phát triển (Roadmap)

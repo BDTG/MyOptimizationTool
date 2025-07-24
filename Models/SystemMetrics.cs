@@ -1,19 +1,30 @@
 ﻿// In folder: Models/SystemMetrics.cs
+using CommunityToolkit.Mvvm.ComponentModel; // THÊM USING NÀY
 using System.Collections.Generic;
+using System.Collections.ObjectModel; // THÊM USING NÀY
 
 namespace MyOptimizationTool.Models
 {
-    public class SystemMetrics
+    // THAY ĐỔI: Kế thừa từ ObservableObject
+    public partial class SystemMetrics : ObservableObject
     {
-        public double RamUsedGB { get; set; }
-        public double RamTotalGB { get; set; }
+        // THAY ĐỔI: Chuyển các thuộc tính động thành [ObservableProperty]
+        [ObservableProperty]
+        private double ramUsedGB;
+
+        [ObservableProperty]
+        private float cpuUsagePercentage;
+
+        [ObservableProperty]
+        private int processCount;
+
+        // GpuInfo cần là ObservableCollection để có thể thêm/xóa/cập nhật item
+        [ObservableProperty]
+        private ObservableCollection<GpuMetrics> gpuInfo = new();
+
+        // Các thuộc tính tĩnh và dẫn xuất không cần thay đổi
+        public double RamTotalGB { get; set; } // Sẽ được gán một lần
         public int RamUsagePercentage => RamTotalGB > 0 ? (int)(RamUsedGB / RamTotalGB * 100) : 0;
-
-        public float CpuUsagePercentage { get; set; }
         public int CpuUsagePercentageInt => (int)CpuUsagePercentage;
-
-        public int ProcessCount { get; set; }
-        public List<DiskInfo>? Disks { get; set; }
-        public List<GpuMetrics>? GpuInfo { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using MyOptimizationTool.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -54,7 +55,18 @@ namespace MyOptimizationTool.Services
             }
             catch { return "Lỗi"; }
         }
-
+        public Task<List<DiskInfo>> GetDiskInfoAsync()
+        {
+            return Task.Run(() =>
+            {
+                return DriveInfo.GetDrives().Where(d => d.IsReady).Select(drive => new DiskInfo
+                {
+                    Name = drive.Name,
+                    TotalSizeGB = drive.TotalSize / (1024.0 * 1024.0 * 1024.0),
+                    FreeSpaceGB = drive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0),
+                }).ToList();
+            });
+        }
         private Task InitializePerformanceCountersAsync()
         {
             return Task.Run(() =>
@@ -92,12 +104,6 @@ namespace MyOptimizationTool.Services
                 double freeRamMB = _ramObject != null ? Convert.ToDouble(_ramObject["FreePhysicalMemory"]) : 0;
                 double usedRamGB = _totalRamGB - (freeRamMB / 1024.0 / 1024.0);
 
-                var diskInfos = DriveInfo.GetDrives().Where(d => d.IsReady).Select(drive => new DiskInfo
-                {
-                    Name = drive.Name,
-                    TotalSizeGB = drive.TotalSize / (1024.0 * 1024.0 * 1024.0),
-                    FreeSpaceGB = drive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0),
-                }).ToList();
                 var gpuInfos = GetGpuMetrics();
 
                 return new SystemMetrics
@@ -106,8 +112,8 @@ namespace MyOptimizationTool.Services
                     ProcessCount = Process.GetProcesses().Length,
                     RamTotalGB = _totalRamGB,
                     RamUsedGB = Math.Round(usedRamGB, 2),
-                    Disks = diskInfos,
-                    GpuInfo = gpuInfos
+                    // Không còn thuộc tính Disks ở đây
+                    GpuInfo = new ObservableCollection<GpuMetrics>(gpuInfos) // Chuyển thành ObservableCollection
                 };
             }
             catch (Exception ex)

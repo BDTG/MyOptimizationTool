@@ -43,7 +43,7 @@
 
                 <!-- PHẦN Ổ ĐĨA -->
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Ổ đĩa" Margin="0,16,0,0"/>
-                <GridView ItemsSource="{Binding Metrics.Disks, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False">
+                <GridView ItemsSource="{Binding Disks, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="models:DiskInfo">
                             <StackPanel Spacing="8" HorizontalAlignment="Center" Margin="0,0,16,16">

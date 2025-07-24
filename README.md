@@ -10,7 +10,6 @@
 Một công cụ mạnh mẽ và hiện đại được xây dựng bằng C# và WinUI 3 để giám sát, dọn dẹp và tối ưu hóa hệ điều hành Windows 11.
 
 ![MyOptimizationTool Screenshot](https://i.imgur.com/example.png) 
-*Ghi chú: Hãy thay thế link ảnh trên bằng ảnh chụp màn hình thực tế của ứng dụng, ví dụ như trang System Info đã hoàn thiện.*
 
 ## 🚀 Giới thiệu
 
@@ -60,35 +59,20 @@ Một công cụ mạnh mẽ và hiện đại được xây dựng bằng C# v�
 *   [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0).
 *   Hệ điều hành Windows 11.
 
-### Cài đặt và Chạy
-
-1.  Sao chép (clone) kho chứa này về máy của bạn:
-    ```sh
-    git clone https://github.com/BDTG/MyOptimizationTool.git
-    ```
-2.  Mở file `MyOptimizationTool.sln` bằng Visual Studio 2022.
-
-3.  ⚠️ **QUAN TRỌNG:** Vì ứng dụng cần truy cập các tài nguyên hệ thống (Registry, services, hardware sensors), bạn **phải** chạy Visual Studio với quyền Administrator.
-    *   *Chuột phải vào biểu tượng Visual Studio -> Chọn "Run as administrator".*
-
-4.  Trong Solution Explorer, chuột phải vào **Solution 'MyOptimizationTool'** và chọn **Restore NuGet Packages**.
-
-5.  Đảm bảo nền tảng build đang được chọn là **x64**.
-
-6.  Nhấn **F5** để build và chạy ứng dụng.
-
 ## 📂 Cấu trúc Dự án
 
 Dự án được tổ chức theo kiến trúc MVVM để đảm bảo sự phân tách rõ ràng giữa giao diện (View), logic hiển thị (ViewModel) và logic nghiệp vụ (Core/Services).
 
+```text
 MyOptimizationTool/
-├── Assets/ # Tài nguyên tĩnh (kịch bản JSON, icon...)
-├── Converters/ # Lớp chuyển đổi dữ liệu cho XAML Binding
-├── Core/ # Logic nghiệp vụ cốt lõi (TweakManager, CleanupService...)
-├── Models/ # Các lớp đối tượng dữ liệu (POCOs) và ObservableObjects
-├── Services/ # Các dịch vụ phức tạp, chuyên biệt (SystemInfoService)
-├── ViewModels/ # Chứa logic và trạng thái cho các trang (Pages)
-└── Views/ # Các file giao diện người dùng (XAML Pages & Windows)
+├── Assets/         # Tài nguyên tĩnh (kịch bản JSON, icon...)
+├── Converters/     # Lớp chuyển đổi dữ liệu cho XAML Binding
+├── Core/           # Logic nghiệp vụ cốt lõi (TweakManager, CleanupService...)
+├── Models/         # Các lớp đối tượng dữ liệu (POCOs) và ObservableObjects
+├── Services/       # Các dịch vụ phức tạp, chuyên biệt (SystemInfoService)
+├── ViewModels/     # Chứa logic và trạng thái cho các trang (Pages)
+└── Views/          # Các file giao diện người dùng (XAML Pages & Windows)```
+---
 
 
 ## 🗺️ Lộ trình Phát triển (Roadmap)

@@ -81,12 +81,61 @@
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Bo mạch chủ:" FontWeight="SemiBold"/>
                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Specs.Motherboard, Mode=OneWay}" Margin="12,0,0,0" TextWrapping="Wrap"/>
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="GPU(s):" FontWeight="SemiBold" VerticalAlignment="Top"/>
-                    <!-- SỬA LỖI Ở ĐÂY: Đổi "GpuNames" thành "Gpus" -->
-                    <ItemsRepeater Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Specs.Gpus, Mode=OneWay}" Margin="12,0,0,0">
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Card đồ họa (GPU)" Margin="0,16,0,0"/>
+                    <ItemsRepeater ItemsSource="{Binding Metrics.GpuInfo, Mode=OneWay}">
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding}" Margin="0,0,0,4"/>
+                                <!-- Mỗi GPU được bọc trong một Border để tạo thành một 'Card' -->
+                                <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="0,0,0,12">
+                                    <StackPanel Spacing="12">
+                                        <!-- Tên GPU -->
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+
+                                        <!-- Dàn các ProgressRing theo Grid cho thẳng hàng -->
+                                        <Grid ColumnDefinitions="*,*,*" HorizontalAlignment="Left">
+                                            <!-- GPU Core Load -->
+                                            <StackPanel Grid.Column="0" Spacing="8" HorizontalAlignment="Center" Margin="0,0,24,0">
+                                                <Grid Width="90" Height="90">
+                                                    <ProgressRing IsIndeterminate="False" Maximum="100" Value="{Binding CoreLoadInt, Mode=OneWay}"/>
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16">
+                                    <Run Text="{Binding CoreLoadInt, Mode=OneWay}"/><Run Text="%"/>
+                                                    </TextBlock>
+                                                </Grid>
+                                                <TextBlock Text="Tải GPU" FontSize="12" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+
+                                            <!-- GPU VRAM -->
+                                            <StackPanel Grid.Column="1" Spacing="8" HorizontalAlignment="Center" Margin="0,0,24,0">
+                                                <Grid Width="90" Height="90">
+                                                    <ProgressRing IsIndeterminate="False" Maximum="100" Value="{Binding VramUsagePercentage, Mode=OneWay}"/>
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16">
+                                    <Run Text="{Binding VramUsagePercentage, Mode=OneWay}"/><Run Text="%"/>
+                                                    </TextBlock>
+                                                </Grid>
+                                                <TextBlock FontSize="12" HorizontalAlignment="Center" TextAlignment="Center">
+                                <Run Text="VRAM"/><LineBreak/>
+                                <Run Text="("/><Run Text="{Binding VramUsedMBFormatted, Mode=OneWay}"/><Run Text="/"/><Run Text="{Binding VramTotalMBFormatted, Mode=OneWay}"/><Run Text=" MB)"/>
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <!-- GPU Temperature -->
+                                            <StackPanel Grid.Column="2" Spacing="8" HorizontalAlignment="Center">
+                                                <Grid Width="90" Height="90">
+                                                    <ProgressRing IsIndeterminate="False" Maximum="120" Value="{Binding TemperatureInt, Mode=OneWay}" Foreground="OrangeRed"/>
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16">
+                                    <Run Text="{Binding TemperatureInt, Mode=OneWay}"/><Run Text="°C"/>
+                                                    </TextBlock>
+                                                </Grid>
+                                                <TextBlock Text="Nhiệt độ" FontSize="12" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>

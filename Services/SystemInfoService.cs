@@ -1,4 +1,5 @@
-﻿using MyOptimizationTool.Models;
+﻿using LibreHardwareMonitor.Hardware;
+using MyOptimizationTool.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,14 +15,13 @@ namespace MyOptimizationTool.Services
         private PerformanceCounter? _cpuCounter;
         private ManagementObject? _ramObject;
         private double _totalRamGB;
+        private Computer? _computer;
 
-        // PHƯƠNG THỨC NÀY ĐÃ BỊ THIẾU
         public Task InitializeAsync()
         {
             return InitializePerformanceCountersAsync();
         }
 
-        // PHƯƠNG THỨC NÀY CŨNG BỊ THIẾU
         public Task<ComputerSpecs> GetStaticComputerSpecsAsync()
         {
             return Task.Run(() =>
@@ -30,7 +30,6 @@ namespace MyOptimizationTool.Services
                     .Get().OfType<ManagementObject>()
                     .Select(obj => obj["Name"]?.ToString()?.Trim() ?? "N/A").ToList();
 
-                // SỬA LẠI TÊN CHO ĐÚNG VỚI MODEL MỚI
                 return new ComputerSpecs
                 {
                     OsVersion = GetWmiProperty("Win32_OperatingSystem", "Caption"),
@@ -72,6 +71,11 @@ namespace MyOptimizationTool.Services
 
                     var osSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
                     _ramObject = osSearcher.Get().OfType<ManagementObject>().FirstOrDefault();
+                    _computer = new Computer
+                    {
+                        IsGpuEnabled = true
+                    };
+                    _computer.Open();
                 }
                 catch (Exception ex)
                 {
@@ -94,6 +98,7 @@ namespace MyOptimizationTool.Services
                     TotalSizeGB = drive.TotalSize / (1024.0 * 1024.0 * 1024.0),
                     FreeSpaceGB = drive.TotalFreeSpace / (1024.0 * 1024.0 * 1024.0),
                 }).ToList();
+                var gpuInfos = GetGpuMetrics();
 
                 return new SystemMetrics
                 {
@@ -102,7 +107,7 @@ namespace MyOptimizationTool.Services
                     RamTotalGB = _totalRamGB,
                     RamUsedGB = Math.Round(usedRamGB, 2),
                     Disks = diskInfos,
-                    GpuInfo = new List<GpuMetrics>()
+                    GpuInfo = gpuInfos
                 };
             }
             catch (Exception ex)
@@ -110,6 +115,64 @@ namespace MyOptimizationTool.Services
                 Debug.WriteLine($"[ERROR GetCurrentMetrics] {ex.Message}");
                 return new SystemMetrics();
             }
+        }
+
+        // --- PHIÊN BẢN HOÀN CHỈNH, ĐÃ DỌN DẸP ---
+        private List<GpuMetrics> GetGpuMetrics()
+        {
+            var gpuMetricsList = new List<GpuMetrics>();
+            if (_computer?.Hardware == null) return gpuMetricsList;
+
+            var gpus = _computer.Hardware.Where(h =>
+                h.HardwareType == HardwareType.GpuAmd ||
+                h.HardwareType == HardwareType.GpuNvidia ||
+                h.HardwareType == HardwareType.GpuIntel);
+
+            foreach (var hardware in gpus)
+            {
+                hardware.Update();
+
+                var metrics = new GpuMetrics { Name = hardware.Name };
+
+                // === TÌM KIẾM LOAD ===
+                // Ưu tiên 'GPU Core' cho card rời, sau đó fallback về 'D3D 3D' cho card tích hợp.
+                var gpuLoad = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load && s.Name == "GPU Core") ??
+                              hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load && s.Name == "D3D 3D");
+
+                // === TÌM KIẾM NHIỆT ĐỘ ===
+                // Ưu tiên 'GPU Core', sau đó đến 'Hot Spot'. Sẽ là null nếu không tìm thấy.
+                var gpuTemp = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature && s.Name == "GPU Core") ??
+                              hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Temperature && s.Name.Contains("Hot Spot"));
+
+                // === TÌM KIẾM VRAM ===
+                // Phân biệt rõ giữa VRAM riêng (Dedicated/Used) và VRAM chia sẻ (Shared)
+                ISensor? vramUsed, vramTotal;
+
+                if (hardware.HardwareType == HardwareType.GpuIntel) // Card Intel thường dùng VRAM chia sẻ
+                {
+                    vramUsed = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.SmallData && s.Name == "D3D Shared Memory Used");
+                    vramTotal = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.SmallData && s.Name == "D3D Shared Memory Total");
+                }
+                else // Card rời dùng VRAM riêng
+                {
+                    vramUsed = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.SmallData && s.Name == "GPU Memory Used");
+                    vramTotal = hardware.Sensors.FirstOrDefault(s => s.SensorType == SensorType.SmallData && s.Name == "GPU Memory Total");
+                }
+
+                // === GÁN GIÁ TRỊ ===
+                if (gpuLoad?.Value != null) metrics.CoreLoad = gpuLoad.Value.Value;
+                if (gpuTemp?.Value != null) metrics.Temperature = gpuTemp.Value.Value;
+                if (vramUsed?.Value != null) metrics.VramUsedMB = vramUsed.Value.Value;
+                if (vramTotal?.Value != null) metrics.VramTotalMB = vramTotal.Value.Value;
+
+                gpuMetricsList.Add(metrics);
+            }
+            return gpuMetricsList;
+        }
+
+        public void Cleanup()
+        {
+            _computer?.Close();
         }
     }
 }

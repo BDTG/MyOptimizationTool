@@ -4,7 +4,7 @@ namespace MyOptimizationTool.Models
 {
     public class TweakScriptItem
     {
-        public string Type { get; set; } // "registry" or "script"
+        public string Type { get; set; } = string.Empty;
         // Dành cho registry
         public string? Path { get; set; }
         public string? ValueName { get; set; }

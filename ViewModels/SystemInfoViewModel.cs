@@ -65,15 +65,6 @@ namespace MyOptimizationTool.ViewModels
             Metrics = _systemInfoService.GetCurrentMetrics();
         }
 
-        public void Cleanup()
-        {
-            if (_timer != null)
-            {
-                _timer.Stop();
-                _timer.Tick -= Timer_Tick_UpdateMetrics;
-            }
-        }
-
         public event PropertyChangedEventHandler? PropertyChanged;
         protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
@@ -81,6 +72,15 @@ namespace MyOptimizationTool.ViewModels
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             return true;
+        }
+        public void Cleanup()
+        {
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer.Tick -= Timer_Tick_UpdateMetrics;
+            }
+            _systemInfoService.Cleanup(); // <-- Thêm dòng này
         }
     }
 }

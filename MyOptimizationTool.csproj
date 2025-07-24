@@ -21,6 +21,7 @@
     <None Remove="Views\NetworkTweakPage.xaml" />
     <None Remove="Views\PlaybookEnginePage.xaml" />
     <None Remove="Views\SettingsPage.xaml" />
+    <None Remove="Views\StartupAppsPage.xaml" />
     <None Remove="Views\SystemCleanupPage.xaml" />
     <None Remove="Views\SystemInfoPage.xaml" />
   </ItemGroup>
@@ -49,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
@@ -68,6 +70,9 @@
     <None Update="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <Page Update="Views\StartupAppsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\NetworkTweakPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

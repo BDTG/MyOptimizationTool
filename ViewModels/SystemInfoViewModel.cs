@@ -1,6 +1,5 @@
 ﻿// In folder: ViewModels/SystemInfoViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.ApplicationInsights;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using MyOptimizationTool.Models;
@@ -12,14 +11,12 @@ using System.Threading.Tasks;
 
 namespace MyOptimizationTool.ViewModels
 {
-    // Lớp đã kế thừa từ ObservableObject
     public partial class SystemInfoViewModel : ObservableObject
     {
-        private readonly SystemInfoService _systemInfoService = new();
+        private readonly SystemInfoService _systemInfoService = App.SystemInfoServiceInstance;
         private DispatcherTimer? _timer;
         private readonly DispatcherQueue _dispatcherQueue;
 
-        // SỬA LỖI 1: Xóa các trường private thủ công, chỉ giữ lại các thuộc tính được tạo tự động.
         [ObservableProperty]
         private ComputerSpecs? specs;
 
@@ -29,27 +26,30 @@ namespace MyOptimizationTool.ViewModels
         [ObservableProperty]
         private bool isLoading = true;
 
-        // Thuộc tính này đã đúng
         public ObservableCollection<DiskInfo> Disks { get; } = new();
 
         public SystemInfoViewModel()
         {
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _ = InitializeViewModelAsync();
+            _ = LoadDataAsync();
         }
 
-        private async Task InitializeViewModelAsync()
+        private async Task LoadDataAsync()
         {
             IsLoading = true;
-            await _systemInfoService.InitializeAsync();
 
+            // Lấy dữ liệu tĩnh một lần
             var staticSpecsData = await _systemInfoService.GetStaticComputerSpecsAsync();
             var diskData = await _systemInfoService.GetDiskInfoAsync();
+
+            // Lấy dữ liệu động lần đầu
             var initialMetrics = _systemInfoService.GetCurrentMetrics();
 
             _dispatcherQueue.TryEnqueue(() =>
             {
                 Specs = staticSpecsData;
+
+                // Gán dữ liệu lần đầu, KHÔNG GHI ĐÈ LẠI
                 Metrics = initialMetrics;
 
                 Disks.Clear();
@@ -58,13 +58,10 @@ namespace MyOptimizationTool.ViewModels
                     Disks.Add(disk);
                 }
 
+                // Bắt đầu timer để cập nhật các giá trị sau đó
                 _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
                 _timer.Tick += Timer_Tick_UpdateMetrics;
                 _timer.Start();
-
-                // SỬA LỖI 2: Xóa dòng gọi không cần thiết này.
-                // Dữ liệu đã được gán ở dòng "Metrics = initialMetrics", không cần cập nhật ngay lập tức.
-                // Timer_Tick_UpdateMetrics(this, EventArgs.Empty); 
 
                 IsLoading = false;
             });
@@ -72,11 +69,11 @@ namespace MyOptimizationTool.ViewModels
 
         private void Timer_Tick_UpdateMetrics(object? sender, object? e)
         {
-            if (Metrics?.GpuInfo == null) return;
+            if (Metrics == null) return;
 
             var newMetrics = _systemInfoService.GetCurrentMetrics();
 
-            // Cập nhật các thuộc tính, UI sẽ tự động phản hồi
+            // Cập nhật các thuộc tính chính
             Metrics.CpuUsagePercentage = newMetrics.CpuUsagePercentage;
             Metrics.RamUsedGB = newMetrics.RamUsedGB;
             Metrics.ProcessCount = newMetrics.ProcessCount;
@@ -84,17 +81,14 @@ namespace MyOptimizationTool.ViewModels
             // Cập nhật thông tin GPU một cách thông minh
             foreach (var newGpu in newMetrics.GpuInfo)
             {
-                // Tìm GpuMetrics tương ứng trong danh sách hiện tại của ViewModel bằng tên
                 var existingGpu = Metrics.GpuInfo.FirstOrDefault(g => g.Name == newGpu.Name);
                 if (existingGpu != null)
                 {
-                    // Cập nhật từng thuộc tính của GpuMetrics đã có
-                    // Chúng ta cần biến GpuMetrics thành ObservableObject để các thay đổi này cũng mượt mà
+                    // Giờ đây các thay đổi này sẽ tự động cập nhật UI một cách mượt mà
                     existingGpu.CoreLoad = newGpu.CoreLoad;
                     existingGpu.Temperature = newGpu.Temperature;
                     existingGpu.VramUsedMB = newGpu.VramUsedMB;
 
-                    // Nếu VramTotalMB chưa có, gán một lần
                     if (existingGpu.VramTotalMB == 0 && newGpu.VramTotalMB > 0)
                     {
                         existingGpu.VramTotalMB = newGpu.VramTotalMB;
@@ -110,10 +104,8 @@ namespace MyOptimizationTool.ViewModels
                 _timer.Stop();
                 _timer.Tick -= Timer_Tick_UpdateMetrics;
             }
-            _systemInfoService.Cleanup();
+            // Không cần gọi _systemInfoService.Cleanup() ở đây nữa
+            // vì service sẽ sống cùng ứng dụng.
         }
-
-        // SỬA LỖI 3: Xóa toàn bộ phần triển khai INotifyPropertyChanged thủ công (sự kiện và SetProperty)
-        // vì ObservableObject đã làm việc đó cho chúng ta.
     }
 }

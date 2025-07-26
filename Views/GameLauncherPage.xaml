@@ -1,56 +1,84 @@
+<!-- In file: Views/GameLauncherPage.xaml -->
 <Page
     x:Name="GameLauncherPageRoot"
     x:Class="MyOptimizationTool.Views.GameLauncherPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:MyOptimizationTool.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:MyOptimizationTool.Models"
-    xmlns:converters="using:MyOptimizationTool.Converters" 
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    mc:Ignorable="d">
+    xmlns:viewmodels="using:MyOptimizationTool.ViewModels"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.Resources>
-        <!-- 
-        SỬA LỖI Ở ĐÂY:
-        Đã đổi tiền tố từ "local" thành "converters" để chỉ đến đúng namespace
-        nơi chứa file BooleanToVisibilityConverter.cs
-        -->
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </Page.Resources>
+    <Page.DataContext>
+        <viewmodels:GameLauncherViewModel/>
+    </Page.DataContext>
 
+    <!-- THAY ĐỔI: Bố cục chính giờ đây có 2 hàng -->
     <Grid RowDefinitions="Auto,*">
-        <CommandBar Grid.Row="0" DefaultLabelPosition="Right" Background="Transparent">
-            <AppBarButton Command="{Binding AddGameCommand}" Icon="Add" Label="Thêm Game" />
-        </CommandBar>
 
-        <Grid Grid.Row="0" Grid.RowSpan="2" 
-              Background="#80000000"
+        <!-- Hàng 0: Thanh thông báo -->
+        <InfoBar Grid.Row="0"
+                 Title="Mẹo"
+                 Message="Chuột phải vào một game để xóa nó khỏi danh sách."
+                 Severity="Informational"
+                 IsOpen="True"
+                 IsClosable="True"
+                 Margin="24,12,24,12"/>
+
+        <!-- Hàng 1: Nội dung chính (Nút Thêm Game và Danh sách Game) -->
+        <Grid Grid.Row="1" RowDefinitions="Auto,*">
+
+            <!-- NÚT THÊM GAME ĐÃ ĐƯỢC DI CHUYỂN VÀO ĐÂY -->
+            <Button Grid.Row="0" 
+                    Command="{Binding AddGameCommand}"
+                    HorizontalAlignment="Right" 
+                    Margin="0,0,24,12">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon Glyph=""/>
+                    <TextBlock Text="Thêm Game"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Danh sách game -->
+            <GridView Grid.Row="1"
+                      ItemsSource="{Binding Games, Mode=OneWay}"
+                      SelectionMode="None" IsItemClickEnabled="False"
+                      Padding="24,0,24,24">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Game">
+                        <Grid Width="280" Height="130" CornerRadius="8">
+                            <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="Xóa Game" Icon="Delete"
+                                                    Command="{Binding DataContext.RemoveGameCommand, ElementName=GameLauncherPageRoot}"
+                                                    CommandParameter="{Binding}"/>
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
+                            <Image Source="{Binding ImagePath}" Stretch="UniformToFill" Opacity="0.5"/>
+                            <Grid Background="#60000000"/>
+                            <StackPanel VerticalAlignment="Bottom" Padding="12">
+                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8" Margin="0,8,0,0">
+                                    <Button Grid.Column="0" Command="{Binding DataContext.LaunchGameCommand, ElementName=GameLauncherPageRoot}" CommandParameter="{Binding}" Content="Normal Boost"/>
+                                    <Button Grid.Column="1" Command="{Binding DataContext.LaunchMaxCommand, ElementName=GameLauncherPageRoot}" CommandParameter="{Binding}" Content="Max Boost" Style="{ThemeResource AccentButtonStyle}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </Grid>
+
+        <!-- Lớp phủ tối ưu hóa (nằm trên tất cả) -->
+        <Grid Grid.RowSpan="2"
+              Background="#A0000000"
               Visibility="{Binding IsOptimizing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
                 <ProgressRing IsActive="True" Width="48" Height="48"/>
-                <TextBlock Text="Đang tối ưu hóa trước khi khởi chạy..." FontSize="16"/>
+                <TextBlock Text="{Binding StatusText, Mode=OneWay}" FontSize="16"/>
             </StackPanel>
         </Grid>
-
-        <GridView Grid.Row="1" 
-                  ItemsSource="{Binding Games, Mode=OneWay}"
-                  SelectionMode="None" IsItemClickEnabled="False"
-                  Padding="24,0,24,24">
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Width="280" Height="160" Background="{ThemeResource LayerFillColorDefaultBrush}"
-                          CornerRadius="8" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
-                        <StackPanel VerticalAlignment="Bottom" Padding="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
-                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
-                            <Button Command="{Binding DataContext.LaunchGameCommand, ElementName=GameLauncherPageRoot}"
-                                    CommandParameter="{Binding}"
-                                    Content="Khởi chạy" HorizontalAlignment="Right" Margin="0,8,0,0"/>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
     </Grid>
 </Page>

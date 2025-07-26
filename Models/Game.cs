@@ -8,7 +8,7 @@ namespace MyOptimizationTool.Models
     {
         public string Name { get; set; } = string.Empty;
         public string ExecutablePath { get; set; } = string.Empty;
-        public string? ImagePath { get; set; } // Đường dẫn tới ảnh bìa của game (tùy chọn)
+        public string? ImagePath { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

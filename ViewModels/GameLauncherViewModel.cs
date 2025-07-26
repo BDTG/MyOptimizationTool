@@ -1,7 +1,6 @@
 ﻿// In folder: ViewModels/GameLauncherViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MyOptimizationTool;
 using MyOptimizationTool.Core;
 using MyOptimizationTool.Models;
 using System;
@@ -11,54 +10,100 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using Microsoft.UI.Xaml.Controls;
 
-public partial class GameLauncherViewModel : ObservableObject
+namespace MyOptimizationTool.ViewModels
 {
-    private readonly GameService _gameService;
-    public ObservableCollection<Game> Games { get; } = new();
-
-    // SỬA LỖI: Đổi tên field thành chữ thường, không có gạch dưới
-    [ObservableProperty]
-    private bool isOptimizing;
-
-    public GameLauncherViewModel()
+    public partial class GameLauncherViewModel : ObservableObject
     {
-        _gameService = new GameService();
-        _ = LoadGamesAsync();
-    }
+        private readonly GameService _gameService = new();
+        private readonly GameBoostService _boostService = new();
+        public ObservableCollection<Game> Games { get; } = new();
 
-    private async Task LoadGamesAsync()
-    {
-        var loadedGames = await _gameService.LoadGamesAsync();
-        foreach (var game in loadedGames) { Games.Add(game); }
-    }
+        [ObservableProperty]
+        private bool isOptimizing; // Trạng thái chung cho cả 2 nút
 
-    [RelayCommand]
-    private async Task AddGameAsync()
-    {
-        var filePicker = new FileOpenPicker { ViewMode = PickerViewMode.Thumbnail, SuggestedStartLocation = PickerLocationId.ComputerFolder };
-        filePicker.FileTypeFilter.Add(".exe");
-        var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
-        InitializeWithWindow.Initialize(filePicker, hwnd);
-        var file = await filePicker.PickSingleFileAsync();
-        if (file != null)
+        [ObservableProperty]
+        private string statusText = "Sẵn sàng để khởi chạy.";
+        
+        public GameLauncherViewModel()
         {
-            var newGame = new Game { Name = Path.GetFileNameWithoutExtension(file.Name), ExecutablePath = file.Path };
-            if (!Games.Any(g => g.ExecutablePath.Equals(newGame.ExecutablePath, StringComparison.OrdinalIgnoreCase)))
+            _ = LoadGamesAsync();
+        }
+
+        private async Task LoadGamesAsync()
+        {
+            var loadedGames = await _gameService.LoadGamesAsync();
+            Games.Clear();
+            foreach (var game in loadedGames) { Games.Add(game); }
+        }
+        [RelayCommand]
+        private async Task RemoveGame(Game? game)
+        {
+            if (game == null) return;
+            var dialog = new ContentDialog
             {
-                Games.Add(newGame);
+                Title = "Xác nhận Xóa",
+                Content = $"Bạn có chắc chắn muốn xóa '{game.Name}' khỏi danh sách không?",
+                PrimaryButtonText = "Xóa",
+                CloseButtonText = "Hủy",
+                DefaultButton = ContentDialogButton.Close,
+                // Gắn dialog với cửa sổ chính
+                XamlRoot = App.MainWindow?.Content.XamlRoot
+            };
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                Games.Remove(game);
                 await _gameService.SaveGamesAsync(Games);
             }
         }
-    }
+        [RelayCommand]
+        private async Task AddGameAsync()
+        {
+            var filePicker = new FileOpenPicker { ViewMode = PickerViewMode.Thumbnail, SuggestedStartLocation = PickerLocationId.ComputerFolder };
+            filePicker.FileTypeFilter.Add(".exe");
+            var hwnd = WindowNative.GetWindowHandle(App.MainWindow);
+            InitializeWithWindow.Initialize(filePicker, hwnd);
+            var file = await filePicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                var newGame = await _gameService.CreateGameFromFileAsync(file.Path);
 
-    [RelayCommand]
-    private async Task LaunchGameAsync(Game? game)
-    {
-        if (game is null) return;
-        IsOptimizing = true;
-        await Task.Delay(3000);
-        _gameService.LaunchGame(game);
-        IsOptimizing = false;
+                if (newGame != null && !Games.Any(g => g.ExecutablePath.Equals(newGame.ExecutablePath, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Games.Add(newGame);
+                    await _gameService.SaveGamesAsync(Games);
+                }
+            }
+        }
+
+        [RelayCommand]
+        private async Task LaunchGame(Game? game)
+        {
+            if (game is null) return;
+            await StartBoost(game, BoostMode.Normal);
+        }
+
+        [RelayCommand]
+        private async Task LaunchMax(Game? game)
+        {
+            if (game is null) return;
+            await StartBoost(game, BoostMode.Max);
+        }
+
+        private async Task StartBoost(Game game, BoostMode mode)
+        {
+            IsOptimizing = true;
+            StatusText = $"Đang áp dụng chế độ {mode} Boost...";
+
+            await _boostService.OptimizeAndLaunch(game, mode);
+
+            StatusText = "Đang khôi phục hệ thống...";
+            await Task.Delay(2000);
+
+            IsOptimizing = false;
+            StatusText = "Sẵn sàng để khởi chạy.";
+        }
     }
 }

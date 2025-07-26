@@ -20,7 +20,12 @@
 
             <!-- Nhóm Tối ưu hóa -->
             <NavigationViewItemHeader Content="Optimization"/>
-
+            <NavigationViewItem Content="Startup Apps" Tag="StartupAppsPage">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph=""/>
+                    <!-- Biểu tượng Power / Toggle -->
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
             <!-- THÊM MỤC MỚI Ở ĐÂY -->
             <NavigationViewItem Content="Tối ưu Mạng" Tag="NetworkTweakPage">
                 <NavigationViewItem.Icon>

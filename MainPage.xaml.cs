@@ -35,8 +35,9 @@ namespace MyOptimizationTool
                     case "SystemInfoPage":
                         ContentFrame.Navigate(typeof(Views.SystemInfoPage));
                         break;
-
-                    // THÊM CASE MỚI Ở ĐÂY
+                    case "StartupAppsPage":
+                        ContentFrame.Navigate(typeof(Views.StartupAppsPage));
+                        break;                    
                     case "NetworkTweakPage":
                         ContentFrame.Navigate(typeof(Views.NetworkTweakPage));
                         break;

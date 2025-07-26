@@ -8,10 +8,6 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.Resources>
-        <converters:BooleanToInvertedBooleanConverter x:Key="BooleanToInvertedBooleanConverter"/>
-    </Page.Resources>
-
     <Grid RowDefinitions="Auto,*,Auto" Padding="24">
         <TextBlock Grid.Row="0" Text="Dọn dẹp Hệ thống" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,12"/>
         <ListView Grid.Row="1" ItemsSource="{Binding CleanupItems}" SelectionMode="None">

@@ -13,6 +13,7 @@ namespace MyOptimizationTool.Models
         private double ramUsedGB;
 
         [ObservableProperty]
+
         private float cpuUsagePercentage;
 
         [ObservableProperty]
@@ -26,5 +27,11 @@ namespace MyOptimizationTool.Models
         public double RamTotalGB { get; set; } // Sẽ được gán một lần
         public int RamUsagePercentage => RamTotalGB > 0 ? (int)(RamUsedGB / RamTotalGB * 100) : 0;
         public int CpuUsagePercentageInt => (int)CpuUsagePercentage;
+        partial void OnCpuUsagePercentageChanged(float value)
+        {
+            // Khi nó được gọi, chúng ta chủ động thông báo rằng
+            // thuộc tính 'CpuUsagePercentageInt' cũng cần được cập nhật trên UI.
+            OnPropertyChanged(nameof(CpuUsagePercentageInt));
+        }
     }
 }

@@ -5,9 +5,6 @@
     xmlns:converters="using:MyOptimizationTool.Converters"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.Resources>
-        <converters:BooleanToInvertedBooleanConverter x:Key="BooleanToInvertedBooleanConverter"/>
-    </Page.Resources>
 
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="24" MaxWidth="500">
         <TextBlock Text="Tối ưu Mạng" Style="{ThemeResource TitleTextBlockStyle}" HorizontalAlignment="Center"/>

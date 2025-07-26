@@ -3,7 +3,8 @@
     x:Class="MyOptimizationTool.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:MyOptimizationTool">
+    xmlns:local="using:MyOptimizationTool"
+    xmlns:converters="using:MyOptimizationTool.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -11,6 +12,7 @@
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
+            <converters:BooleanToInvertedBooleanConverter x:Key="BooleanToInvertedBooleanConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

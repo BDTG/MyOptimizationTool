@@ -2,7 +2,7 @@
 // File: Models/SystemInfoSnapshot.cs
 using System.Collections.Generic;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     // Lớp này đóng gói tất cả thông tin mà service sẽ gửi đi
     public class SystemInfoSnapshot

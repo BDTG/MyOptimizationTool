@@ -1,7 +1,7 @@
 ﻿// In folder: Models/ComputerSpecs.cs
 using System.Collections.Generic;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public class ComputerSpecs
     {

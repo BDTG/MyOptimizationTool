@@ -66,6 +66,9 @@
     <Folder Include="Controls\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MyOptimizationTool.Shared\MyOptimizationTool.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>

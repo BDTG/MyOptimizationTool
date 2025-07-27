@@ -1,5 +1,5 @@
 ﻿// In folder: Models/DiskInfo.cs
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public class DiskInfo
     {

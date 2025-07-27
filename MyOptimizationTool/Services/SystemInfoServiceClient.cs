@@ -1,6 +1,6 @@
 ﻿// In project: MyOptimizationTool
 // File: Services/SystemInfoServiceClient.cs
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;

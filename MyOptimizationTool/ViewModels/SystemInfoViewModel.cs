@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using MyOptimizationTool.Models;
 using MyOptimizationTool.Services;
+using MyOptimizationTool.Shared.Models; // <-- SỬ DỤNG NAMESPACE MỚI
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -61,16 +61,12 @@ namespace MyOptimizationTool.ViewModels
                             Metrics.RamUsedGB = snapshot.Metrics.RamUsedGB;
                             Metrics.ProcessCount = snapshot.Metrics.ProcessCount;
                             Metrics.RamTotalGB = snapshot.Metrics.RamTotalGB;
-                            // Cập nhật các giá trị khác tương tự...
+                            // Cập nhật GPU, v.v...
                         }
                     }
                 });
             }
         }
-
-        public void Cleanup()
-        {
-            _timer?.Stop();
-        }
+        public void Cleanup() { _timer?.Stop(); }
     }
 }

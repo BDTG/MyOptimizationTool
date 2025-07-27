@@ -1,27 +1,17 @@
-# Visual Studio
+# Visual Studio cache
 .vs/
-*.suo
+
+# User-specific files
 *.user
-*.sln.docstates
 
 # Build results
+[Dd]ebug/
+[Rr]elease/
 [Bb]in/
 [Oo]bj/
 
-# Rider
+# Rider files
 .idea/
 
-# User-specific files
-*.DotSettings.user
-
-# Windows
-Thumbs.db
-ehthumbs.db
-
-# Packages
-/packages/
-*.nupkg
-
-# App packages
-AppPackages/
-Bundle/
+# Secrets
+appsettings.Development.json

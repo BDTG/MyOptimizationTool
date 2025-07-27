@@ -1,4 +1,5 @@
 ﻿using MyOptimizationTool.Service;
+using Microsoft.Extensions.Hosting;
 
 // Nếu bạn đã tick vào "Do not use top-level statements", file của bạn sẽ có cấu trúc này
 public class Program

@@ -1,7 +1,7 @@
 ﻿// In folder: Models/GpuMetrics.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public partial class GpuMetrics : ObservableObject
     {

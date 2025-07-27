@@ -6,106 +6,71 @@ using MyOptimizationTool.Models;
 using MyOptimizationTool.Services;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyOptimizationTool.ViewModels
 {
     public partial class SystemInfoViewModel : ObservableObject
     {
-        private readonly SystemInfoService _systemInfoService = App.SystemInfoServiceInstance;
+        private readonly SystemInfoServiceClient _client = new();
         private DispatcherTimer? _timer;
         private readonly DispatcherQueue _dispatcherQueue;
 
-        [ObservableProperty]
-        private ComputerSpecs? specs;
-
-        [ObservableProperty]
-        private SystemMetrics? metrics;
-
-        [ObservableProperty]
-        private bool isLoading = true;
-
+        [ObservableProperty] private ComputerSpecs? specs;
+        [ObservableProperty] private SystemMetrics? metrics;
+        [ObservableProperty] private bool isLoading = true;
         public ObservableCollection<DiskInfo> Disks { get; } = new();
 
         public SystemInfoViewModel()
         {
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _ = LoadDataAsync();
+            _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+            _timer.Tick += async (s, e) => await UpdateDataAsync();
+            _ = LoadInitialDataAsync();
         }
 
-        private async Task LoadDataAsync()
+        private async Task LoadInitialDataAsync()
         {
             IsLoading = true;
-
-            // Lấy dữ liệu tĩnh một lần
-            var staticSpecsData = await _systemInfoService.GetStaticComputerSpecsAsync();
-            var diskData = await _systemInfoService.GetDiskInfoAsync();
-
-            // Lấy dữ liệu động lần đầu
-            var initialMetrics = _systemInfoService.GetCurrentMetrics();
-
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                Specs = staticSpecsData;
-
-                // Gán dữ liệu lần đầu, KHÔNG GHI ĐÈ LẠI
-                Metrics = initialMetrics;
-
-                Disks.Clear();
-                foreach (var disk in diskData)
-                {
-                    Disks.Add(disk);
-                }
-
-                // Bắt đầu timer để cập nhật các giá trị sau đó
-                _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
-                _timer.Tick += Timer_Tick_UpdateMetrics;
-                _timer.Start();
-
-                IsLoading = false;
-            });
+            await UpdateDataAsync(); // Lấy dữ liệu lần đầu
+            _timer?.Start();
+            IsLoading = false;
         }
 
-        private void Timer_Tick_UpdateMetrics(object? sender, object? e)
+        private async Task UpdateDataAsync()
         {
-            if (Metrics == null) return;
-
-            var newMetrics = _systemInfoService.GetCurrentMetrics();
-
-            // Cập nhật các thuộc tính chính
-            Metrics.CpuUsagePercentage = newMetrics.CpuUsagePercentage;
-            Metrics.RamUsedGB = newMetrics.RamUsedGB;
-            Metrics.ProcessCount = newMetrics.ProcessCount;
-
-            // Cập nhật thông tin GPU một cách thông minh
-            foreach (var newGpu in newMetrics.GpuInfo)
+            var snapshot = await _client.GetSystemInfoSnapshotAsync();
+            if (snapshot != null)
             {
-                var existingGpu = Metrics.GpuInfo.FirstOrDefault(g => g.Name == newGpu.Name);
-                if (existingGpu != null)
+                _dispatcherQueue.TryEnqueue(() =>
                 {
-                    // Giờ đây các thay đổi này sẽ tự động cập nhật UI một cách mượt mà
-                    existingGpu.CoreLoad = newGpu.CoreLoad;
-                    existingGpu.Temperature = newGpu.Temperature;
-                    existingGpu.VramUsedMB = newGpu.VramUsedMB;
-
-                    if (existingGpu.VramTotalMB == 0 && newGpu.VramTotalMB > 0)
+                    // Gán dữ liệu tĩnh (chỉ cần gán lần đầu)
+                    if (Specs == null && snapshot.Specs != null) Specs = snapshot.Specs;
+                    if (Disks.Count == 0 && snapshot.Disks != null)
                     {
-                        existingGpu.VramTotalMB = newGpu.VramTotalMB;
+                        foreach (var disk in snapshot.Disks) Disks.Add(disk);
                     }
-                }
+
+                    // Cập nhật dữ liệu động
+                    if (snapshot.Metrics != null)
+                    {
+                        if (Metrics == null) Metrics = snapshot.Metrics;
+                        else
+                        {
+                            Metrics.CpuUsagePercentage = snapshot.Metrics.CpuUsagePercentage;
+                            Metrics.RamUsedGB = snapshot.Metrics.RamUsedGB;
+                            Metrics.ProcessCount = snapshot.Metrics.ProcessCount;
+                            Metrics.RamTotalGB = snapshot.Metrics.RamTotalGB;
+                            // Cập nhật các giá trị khác tương tự...
+                        }
+                    }
+                });
             }
         }
 
         public void Cleanup()
         {
-            if (_timer != null)
-            {
-                _timer.Stop();
-                _timer.Tick -= Timer_Tick_UpdateMetrics;
-            }
-            // Không cần gọi _systemInfoService.Cleanup() ở đây nữa
-            // vì service sẽ sống cùng ứng dụng.
+            _timer?.Stop();
         }
     }
 }

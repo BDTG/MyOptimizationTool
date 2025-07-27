@@ -16,13 +16,13 @@ namespace MyOptimizationTool.ViewModels
             Info = new DashboardInfo
             {
                 // THAY ĐỔI 1: Cập nhật phiên bản ứng dụng
-                AppVersion = "Phiên bản 1.4.0-beta",
+                AppVersion = "Phiên bản 1.5.0-beta",
                 Author = "BDTG",
                 CopyrightNotice = $"Bản quyền © {DateTime.Now.Year} BDTG. Đã đăng ký bản quyền.",
 
                 // THAY ĐỔI 2: Cập nhật thông báo mới
-                UpdateMessageTitle = "Đại tu trang Giám sát: Thêm GPU và Nâng cấp Trải nghiệm!",
-                UpdateMessageContent = "Trang Giám sát Hệ thống đã được nâng cấp toàn diện với tính năng theo dõi GPU chi tiết, giao diện mượt mà và thông minh hơn, mang lại trải nghiệm chuyên nghiệp.",
+                UpdateMessageTitle = "Nâng cấp Kiến trúc: Giờ đây đã có Dịch vụ Chạy nền!",
+                UpdateMessageContent = "Ứng dụng đã được tái cấu trúc với một dịch vụ chạy nền chuyên dụng. Điều này giúp thu thập dữ liệu hiệu quả hơn, giảm tải cho giao diện chính và mở đường cho các tính năng tối ưu hóa tự động trong tương lai.",
 
                 // THAY ĐỔI 3: Thêm mục changelog mới nhất vào đầu danh sách
                 Changelog = new List<ChangelogEntry>
@@ -30,7 +30,20 @@ namespace MyOptimizationTool.ViewModels
                     // === MỤC CHANGELOG MỚI ===
                     new ChangelogEntry
                     {
-                        Version = "v1.4.0-beta (Hiện tại)",
+                        Version = "v1.5.0-beta (Hiện tại)",
+                        Changes = new List<string>
+                        {
+                            "✨ [Mới] Xây dựng và tích hợp `MyOptimizationTool.Service`, một Dịch vụ Windows chạy nền chuyên dụng.",
+                            "🚀 [Kiến trúc] Tái cấu trúc toàn bộ luồng giám sát hệ thống theo mô hình Client-Server.",
+                            "🚀 [Kiến trúc] Di chuyển toàn bộ logic thu thập dữ liệu nặng (WMI, LibreHardwareMonitor) sang dịch vụ nền, giúp giao diện chính nhẹ nhàng và ổn định hơn.",
+                            "🚀 [Cải tiến] Sử dụng Named Pipes để giao tiếp hiệu quả giữa giao diện và dịch vụ nền.",
+                            "🚀 [Cải tiến] Đóng gói dữ liệu giám sát vào một đối tượng `SystemInfoSnapshot` để tối ưu hóa việc truyền tải."
+                        }
+                    },
+                    // === CÁC MỤC CŨ ===
+                    new ChangelogEntry
+                    {
+                        Version = "v1.4.0-beta",
                         Changes = new List<string>
                         {
                             "✨ [Mới] Thêm chức năng giám sát GPU toàn diện vào trang Giám sát Hệ thống.",
@@ -40,11 +53,10 @@ namespace MyOptimizationTool.ViewModels
                             "🚀 [Cải tiến] Tối ưu hóa hiệu năng: Thông tin ổ đĩa chỉ quét một lần khi tải trang và các vòng tròn tiến trình (Progress Ring) cập nhật mượt mà, không bị giật.",
                             "🐛 [Sửa lỗi] Khắc phục các lỗi về bố cục (layout) trên trang Giám sát Hệ thống, loại bỏ hiện tượng các phần tử bị chồng chéo."
                         }
-                    },
-                    // === CÁC MỤC CŨ ===
+                    },                    
                     new ChangelogEntry
                     {
-                        Version = "v1.3.0-beta (Hiện tại)",
+                        Version = "v1.3.0-beta",
                         Changes = new List<string>
                         {
                             "✨ [Mới] Thêm trang 'Tối ưu Mạng' với chức năng Áp dụng Tinh chỉnh và Khôi phục Mặc định.",

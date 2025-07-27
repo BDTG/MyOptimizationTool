@@ -27,10 +27,46 @@ namespace MyOptimizationTool.ViewModels
 
         private void LoadCleanupItems()
         {
+            CleanupItems.Clear();
+
+            // === MỤC CƠ BẢN ===
             CleanupItems.Add(new CleanupItem { DisplayName = "Tệp tạm thời của Windows", Paths = { @"C:\Windows\Temp" } });
-            CleanupItems.Add(new CleanupItem { DisplayName = "Tệp tạm thời của Người dùng", Paths = { Environment.GetEnvironmentVariable("TEMP")! } });
-            CleanupItems.Add(new CleanupItem { DisplayName = "Thư mục Prefetch", Paths = { @"C:\Windows\Prefetch" } });
-            CleanupItems.Add(new CleanupItem { DisplayName = "Thư mục Tải về (Downloads)", Paths = { Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") } });
+            CleanupItems.Add(new CleanupItem { DisplayName = "Tệp tạm thời của Người dùng", Paths = { Path.GetTempPath() } });
+            CleanupItems.Add(new CleanupItem { DisplayName = "Thư mục Prefetch", Paths = { @"C:\Windows\Prefetch" }, IsSelected = false });
+            CleanupItems.Add(new CleanupItem { DisplayName = "Thư mục Tải về (Downloads)", Paths = { Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") }, IsSelected = false });
+            CleanupItems.Add(new CleanupItem { DisplayName = "Thùng rác (Recycle Bin)", Paths = { "$Recycle.Bin" }, IsSelected = false });
+
+
+            // === TRÌNH DUYỆT ===
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            CleanupItems.Add(new CleanupItem
+            {
+                DisplayName = "Google Chrome Cache",
+                Paths = { Path.Combine(localAppData, @"Google\Chrome\User Data\Default\Cache") }
+            });
+            CleanupItems.Add(new CleanupItem
+            {
+                DisplayName = "Microsoft Edge Cache",
+                Paths = { Path.Combine(localAppData, @"Microsoft\Edge\User Data\Default\Cache") }
+            });
+
+            // === ỨNG DỤNG ===
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            CleanupItems.Add(new CleanupItem
+            {
+                DisplayName = "Discord Cache",
+                Paths = { Path.Combine(appData, @"discord\Cache"), Path.Combine(appData, @"discord\Code Cache") }
+            });
+            // Lưu ý: Đường dẫn Steam có thể cần được cấu hình nếu người dùng cài ở vị trí khác
+            var steamPath = @"C:\Program Files (x86)\Steam";
+            if (Directory.Exists(steamPath))
+            {
+                CleanupItems.Add(new CleanupItem
+                {
+                    DisplayName = "Steam Download Cache",
+                    Paths = { Path.Combine(steamPath, @"steamapps\downloading"), Path.Combine(steamPath, @"appcache\httpcache") }
+                });
+            }
         }
 
         [RelayCommand]

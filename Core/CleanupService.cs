@@ -30,6 +30,11 @@ namespace MyOptimizationTool.Core
         // Dọn dẹp một thư mục (bất đồng bộ)
         public Task<long> CleanDirectoryAsync(string path)
         {
+            if (path.Equals("$Recycle.Bin", StringComparison.OrdinalIgnoreCase))
+            {
+                return ClearRecycleBinAsync();
+            }
+
             return Task.Run(async () =>
             {
                 long totalFreed = 0;
@@ -40,12 +45,7 @@ namespace MyOptimizationTool.Core
                 // Xóa file
                 foreach (var file in directory.GetFiles())
                 {
-                    try
-                    {
-                        var fileSize = file.Length;
-                        file.Delete();
-                        totalFreed += fileSize;
-                    }
+                    try { file.Delete(); totalFreed += file.Length; }
                     catch (Exception ex) { Debug.WriteLine($"Could not delete file {file.FullName}: {ex.Message}"); }
                 }
 
@@ -62,6 +62,41 @@ namespace MyOptimizationTool.Core
                 }
 
                 return totalFreed;
+            });
+        }
+        private Task<long> ClearRecycleBinAsync()
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    // Lấy tổng dung lượng của thùng rác trước khi dọn
+                    // Đây là một cách ước tính, không hoàn toàn chính xác nhưng đủ dùng
+                    long size = 0;
+                    var drive = new DriveInfo(Path.GetPathRoot(Environment.SystemDirectory));
+                    var recycleBinPath = Path.Combine(drive.Name, "$Recycle.Bin");
+                    if(Directory.Exists(recycleBinPath))
+                    {
+                        size = new DirectoryInfo(recycleBinPath).GetFiles("*", SearchOption.AllDirectories).Sum(f => f.Length);
+                    }
+
+                    // Dùng PowerShell để dọn dẹp một cách an toàn
+                    var startInfo = new ProcessStartInfo("powershell.exe")
+                    {
+                        Arguments = "-NoProfile -Command \"Clear-RecycleBin -Force\"",
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        Verb = "runas"
+                    };
+                    Process.Start(startInfo)?.WaitForExit();
+                    Debug.WriteLine("Recycle Bin cleared.");
+                    return size;
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine($"Failed to clear Recycle Bin: {ex.Message}");
+                    return 0;
+                }
             });
         }
     }

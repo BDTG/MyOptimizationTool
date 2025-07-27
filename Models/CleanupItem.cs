@@ -22,5 +22,10 @@ namespace MyOptimizationTool.Models
 
         // SỬA LỖI: Truy cập qua Property viết hoa "ScannedSizeInBytes"
         public string SizeDisplay => ScannedSizeInBytes > 0 ? $"{ScannedSizeInBytes / (1024.0 * 1024.0):N2} MB" : "0 MB";
+        partial void OnScannedSizeInBytesChanged(long value)
+        {
+            // Và nó sẽ chủ động báo cho UI rằng 'SizeDisplay' cũng cần được cập nhật
+            OnPropertyChanged(nameof(SizeDisplay));
+        }
     }
 }

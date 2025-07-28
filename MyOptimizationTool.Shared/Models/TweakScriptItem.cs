@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public class TweakScriptItem
     {

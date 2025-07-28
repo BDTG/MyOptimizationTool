@@ -1,7 +1,6 @@
 ﻿// In folder: ViewModels/StartupAppsViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
-using MyOptimizationTool.Core;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ namespace MyOptimizationTool.ViewModels
 {
     public partial class StartupAppsViewModel : ObservableObject
     {
-        private readonly StartupService _startupService = new();
+        //private readonly StartupService _startupService = new();
         public ObservableCollection<StartupItem> StartupItems { get; } = new();
 
         [ObservableProperty]
@@ -19,14 +18,14 @@ namespace MyOptimizationTool.ViewModels
 
         public StartupAppsViewModel()
         {
-            _ = LoadStartupItemsAsync();
+            //_ = LoadStartupItemsAsync();
         }
         [RelayCommand]
         private async Task RefreshAsync()
         {
-            await LoadStartupItemsAsync();
+            await Task.CompletedTask;
         }
-        private async Task LoadStartupItemsAsync()
+        /*private async Task LoadStartupItemsAsync()
         {
             IsLoading = true;
             StartupItems.Clear();
@@ -46,6 +45,6 @@ namespace MyOptimizationTool.ViewModels
                 // Khi người dùng bật/tắt ToggleSwitch, gọi service để thực hiện
                 _startupService.SetStartupItemStatus(changedItem, changedItem.IsEnabled);
             }
-        }
+        }*/
     }
 }

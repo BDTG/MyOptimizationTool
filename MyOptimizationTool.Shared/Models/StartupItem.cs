@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public enum StartupItemLocation { Registry_CurrentUser, Registry_LocalMachine, Folder_CurrentUser, Folder_LocalMachine }
 

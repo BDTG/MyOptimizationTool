@@ -1,8 +1,7 @@
 ﻿// In folder: ViewModels/SystemCleanupViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MyOptimizationTool.Core;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -13,7 +12,7 @@ namespace MyOptimizationTool.ViewModels
 {
     public partial class SystemCleanupViewModel : ObservableObject
     {
-        private readonly CleanupService _cleanupService = new();
+        //private readonly CleanupService _cleanupService = new();
         public ObservableCollection<CleanupItem> CleanupItems { get; } = new();
 
         [ObservableProperty] private bool isBusy;
@@ -69,8 +68,8 @@ namespace MyOptimizationTool.ViewModels
             }
         }
 
-        [RelayCommand]
-        private async Task ScanAsync()
+        //[RelayCommand]
+        /*private async Task ScanAsync()
         {
             IsBusy = true;
             TotalCleanedSizeMB = 0;
@@ -128,6 +127,6 @@ namespace MyOptimizationTool.ViewModels
             TotalCleanedSizeMB = totalBytesCleaned / (1024.0 * 1024.0);
             StatusText = $"Hoàn tất! Đã dọn dẹp thành công {TotalCleanedSizeMB:N2} MB.";
             IsBusy = false;
-        }
+        }*/
     }
 }

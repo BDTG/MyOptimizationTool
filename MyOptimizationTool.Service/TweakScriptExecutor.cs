@@ -1,13 +1,14 @@
 ﻿// In folder: Core/TweakScriptExecutor.cs
-using MyOptimizationTool.Models;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using MyOptimizationTool.Shared.Models;
+using MyOptimizationTool.Service.Core;
 
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Service
 {
     public class TweakScriptExecutor
     {

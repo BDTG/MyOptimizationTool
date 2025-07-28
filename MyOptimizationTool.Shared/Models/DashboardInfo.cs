@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     // Lớp này chứa thông tin cho từng phiên bản trong changelog
     public class ChangelogEntry

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.Win32;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public enum TweakType { Registry, PowerShell }
 

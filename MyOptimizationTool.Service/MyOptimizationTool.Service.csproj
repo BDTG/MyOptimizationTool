@@ -11,6 +11,7 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.7" />
 		<PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.7" />
 		<PackageReference Include="System.Management" Version="9.0.7" />
+		<PackageReference Include="System.Management.Automation" Version="7.5.2" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\MyOptimizationTool.Shared\MyOptimizationTool.Shared.csproj" />

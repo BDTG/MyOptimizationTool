@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public class Game : INotifyPropertyChanged
     {

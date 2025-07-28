@@ -2,9 +2,9 @@
 using Microsoft.Win32;
 using System.Diagnostics; // Cần cho Debug.WriteLine
 using System;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Service.Core
 {
     public class RegistryManager
     {

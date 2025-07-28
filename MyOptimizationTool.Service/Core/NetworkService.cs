@@ -4,7 +4,7 @@ using System.Linq;
 using System.Management.Automation; // Cần thêm gói NuGet System.Management.Automation
 using System;
 
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Service.Core
 {
     public class NetworkService
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Service.Core
 {
     public class CleanupService
     {

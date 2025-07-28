@@ -1,5 +1,5 @@
 ﻿using LibreHardwareMonitor.Hardware;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Management;
 using System.Threading.Tasks;
 
-namespace MyOptimizationTool.Services
+namespace MyOptimizationTool.Service
 {
     public class SystemInfoService
     {

@@ -1,6 +1,6 @@
 ﻿// In folder: Core/StartupService.cs
 using Microsoft.Win32;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Service.Core
 {
     public class StartupService
     {

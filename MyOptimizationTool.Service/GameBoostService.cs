@@ -1,34 +1,29 @@
-﻿// In folder: Core/GameBoostService.cs
-using MyOptimizationTool.Models;
+﻿// In project: MyOptimizationTool.Service
+// File: Core/GameBoostService.cs
+using MyOptimizationTool.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
+using System.IO;
 
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Service.Core
 {
     public class GameBoostService
     {
         private readonly TweakScriptExecutor _tweakExecutor = new();
         private List<string> _stoppedServices = new();
+        private bool _explorerKilled = false;
 
-        // Danh sách các dịch vụ an toàn để tắt (có thể mở rộng)
         private readonly List<string> _normalModeServices = new() { "BITS", "SysMain" };
         private readonly List<string> _maxModeServices = new() { "BITS", "SysMain", "WSearch", "Spooler" };
 
+        // PHƯƠNG THỨC HOÀN CHỈNH ĐỂ TỐI ƯU, KHỞI CHẠY VÀ KHÔI PHỤC
         public async Task OptimizeAndLaunch(Game game, BoostMode mode)
         {
             // Bước 1: Áp dụng các tối ưu
-            var servicesToStop = (mode == BoostMode.Normal) ? _normalModeServices : _maxModeServices;
-            await StopServices(servicesToStop);
-            await _tweakExecutor.ExecuteFromFileAsync("NetworkTweaks.json");
-
-            if (mode == BoostMode.Max)
-            {
-                KillProcess("explorer.exe");
-            }
+            await ApplyBoost(mode);
 
             // Bước 2: Khởi chạy và theo dõi game
             var gameProcess = LaunchGame(game);
@@ -41,14 +36,46 @@ namespace MyOptimizationTool.Core
             await RestoreSystem();
         }
 
-        private async Task RestoreSystem()
+        public async Task ApplyBoost(BoostMode mode)
         {
-            // Khôi phục dịch vụ
+            var servicesToStop = (mode == BoostMode.Normal) ? _normalModeServices : _maxModeServices;
+            await StopServices(servicesToStop);
+            await _tweakExecutor.ExecuteFromFileAsync("NetworkTweaks.json");
+
+            if (mode == BoostMode.Max)
+            {
+                KillProcess("explorer.exe");
+                _explorerKilled = true;
+            }
+        }
+
+        public async Task RestoreSystem()
+        {
             await RestartStoppedServices();
-            // Khôi phục mạng (ví dụ)
             await _tweakExecutor.ExecuteNetworkResetScriptAsync();
-            // Khởi động lại Explorer
-            LaunchProcess("explorer.exe");
+            if (_explorerKilled)
+            {
+                LaunchProcess("explorer.exe");
+                _explorerKilled = false;
+            }
+        }
+
+        #region Private Methods
+        private Process? LaunchGame(Game game)
+        {
+            try
+            {
+                return Process.Start(new ProcessStartInfo(game.ExecutablePath)
+                {
+                    WorkingDirectory = Path.GetDirectoryName(game.ExecutablePath),
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error launching game: {ex.Message}");
+                return null;
+            }
         }
 
         private Task StopServices(List<string> serviceNames)
@@ -65,7 +92,7 @@ namespace MyOptimizationTool.Core
                         {
                             sc.Stop();
                             sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(15));
-                            _stoppedServices.Add(name); // Ghi nhận dịch vụ đã tắt thành công
+                            _stoppedServices.Add(name);
                             Debug.WriteLine($"Stopped service: {name}");
                         }
                     }
@@ -108,23 +135,6 @@ namespace MyOptimizationTool.Core
             catch (Exception ex) { Debug.WriteLine($"Failed to kill process {processName}: {ex.Message}"); }
         }
 
-        private Process? LaunchGame(Game game)
-        {
-            try
-            {
-                return Process.Start(new ProcessStartInfo(game.ExecutablePath)
-                {
-                    WorkingDirectory = System.IO.Path.GetDirectoryName(game.ExecutablePath),
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error launching game: {ex.Message}");
-                return null;
-            }
-        }
-
         private void LaunchProcess(string processName)
         {
             try
@@ -133,5 +143,6 @@ namespace MyOptimizationTool.Core
             }
             catch (Exception ex) { Debug.WriteLine($"Failed to launch process {processName}: {ex.Message}"); }
         }
+        #endregion
     }
 }

@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public enum CleanupStatus { Ready, Scanning, Scanned, Cleaning, Cleaned, Error }
 

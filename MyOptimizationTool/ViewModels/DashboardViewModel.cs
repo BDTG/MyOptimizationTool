@@ -1,6 +1,6 @@
 ﻿// In folder: ViewModels/DashboardViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System;
 using System.Collections.Generic;
 

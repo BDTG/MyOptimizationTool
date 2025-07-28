@@ -1,9 +1,9 @@
 ﻿// In folder: Core/TweakManager.cs
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System;
 using System.Linq;
 
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Service.Core
 {
     public class TweakManager
     {

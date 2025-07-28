@@ -1,5 +1,7 @@
-﻿// In folder: Shared/Core/GameService.cs
-using MyOptimizationTool.Models; // Sửa using
+﻿// In project: MyOptimizationTool.Shared
+// File: Services/GameService.cs
+
+using MyOptimizationTool.Shared.Models; // <-- ĐÂY LÀ DÒNG QUAN TRỌNG NHẤT ĐÃ ĐƯỢC SỬA
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,10 +11,8 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-// SỬA LỖI: Bọc tất cả code trong một namespace
-namespace MyOptimizationTool.Core
+namespace MyOptimizationTool.Shared.Services
 {
-    // SỬA LỖI: Bọc tất cả code trong một class
     public class GameService
     {
         private readonly string _saveFilePath;
@@ -23,11 +23,12 @@ namespace MyOptimizationTool.Core
             var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var appDataFolder = Path.Combine(localAppData, "MyOptimizationTool");
             Directory.CreateDirectory(appDataFolder);
-            
+
             _saveFilePath = Path.Combine(appDataFolder, "games.json");
             _artCacheFolder = Path.Combine(appDataFolder, "GameArt");
             Directory.CreateDirectory(_artCacheFolder);
         }
+
         public async Task<Game?> CreateGameFromFileAsync(string exePath)
         {
             try
@@ -38,7 +39,6 @@ namespace MyOptimizationTool.Core
                     ExecutablePath = exePath
                 };
 
-                // Trích xuất và lưu icon
                 string? iconPath = await ExtractAndSaveIconAsync(exePath);
                 newGame.ImagePath = iconPath;
 
@@ -62,13 +62,12 @@ namespace MyOptimizationTool.Core
                     {
                         using (var bmp = ico.ToBitmap())
                         {
-                            // Tạo tên file an toàn và lưu vào thư mục cache
                             var safeName = Path.GetFileNameWithoutExtension(exePath).Replace(" ", "_");
                             var imagePath = Path.Combine(_artCacheFolder, $"{safeName}.png");
 
                             bmp.Save(imagePath, ImageFormat.Png);
 
-                            return imagePath; // Trả về đường dẫn đến file icon đã lưu
+                            return imagePath;
                         }
                     }
                 }
@@ -79,6 +78,7 @@ namespace MyOptimizationTool.Core
                 return null;
             });
         }
+
         public async Task<List<Game>> LoadGamesAsync()
         {
             if (!File.Exists(_saveFilePath)) return new List<Game>();
@@ -94,22 +94,6 @@ namespace MyOptimizationTool.Core
         {
             var json = JsonSerializer.Serialize(games, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(_saveFilePath, json);
-        }
-
-        public void LaunchGame(Game game)
-        {
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo(game.ExecutablePath)
-                {
-                    WorkingDirectory = Path.GetDirectoryName(game.ExecutablePath)
-                };
-                Process.Start(startInfo);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error launching game: {ex.Message}");
-            }
         }
     }
 }

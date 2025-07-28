@@ -1,8 +1,9 @@
 ﻿// In folder: ViewModels/GameLauncherViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MyOptimizationTool.Core;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Services;
+using MyOptimizationTool.Shared.Models;
+using MyOptimizationTool.Services; // Thêm using cho Client mới
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -17,20 +18,13 @@ namespace MyOptimizationTool.ViewModels
     public partial class GameLauncherViewModel : ObservableObject
     {
         private readonly GameService _gameService = new();
-        private readonly GameBoostService _boostService = new();
+        private readonly GameBoostServiceClient _boostClient = new();
         public ObservableCollection<Game> Games { get; } = new();
 
-        [ObservableProperty]
-        private bool isOptimizing; // Trạng thái chung cho cả 2 nút
-
-        [ObservableProperty]
-        private string statusText = "Sẵn sàng để khởi chạy.";
+        [ObservableProperty] private bool isOptimizing;
+        [ObservableProperty] private string statusText = "Sẵn sàng để khởi chạy.";
         
-        public GameLauncherViewModel()
-        {
-            _ = LoadGamesAsync();
-        }
-
+        public GameLauncherViewModel() { _ = LoadGamesAsync(); }
         private async Task LoadGamesAsync()
         {
             var loadedGames = await _gameService.LoadGamesAsync();
@@ -77,33 +71,21 @@ namespace MyOptimizationTool.ViewModels
                 }
             }
         }
-
         [RelayCommand]
         private async Task LaunchGame(Game? game)
         {
-            if (game is null) return;
-            await StartBoost(game, BoostMode.Normal);
+            if (game == null) return;
+            // Gửi yêu cầu boost đi và không cần chờ đợi
+            await _boostClient.RequestBoostAndLaunch(game, BoostMode.Normal);
+            // Có thể thêm một thông báo nhỏ ở đây "Đã gửi yêu cầu Boost!"
         }
 
+        // LỆNH MỚI CHO NÚT MAX BOOST
         [RelayCommand]
         private async Task LaunchMax(Game? game)
         {
-            if (game is null) return;
-            await StartBoost(game, BoostMode.Max);
-        }
-
-        private async Task StartBoost(Game game, BoostMode mode)
-        {
-            IsOptimizing = true;
-            StatusText = $"Đang áp dụng chế độ {mode} Boost...";
-
-            await _boostService.OptimizeAndLaunch(game, mode);
-
-            StatusText = "Đang khôi phục hệ thống...";
-            await Task.Delay(2000);
-
-            IsOptimizing = false;
-            StatusText = "Sẵn sàng để khởi chạy.";
+            if (game == null) return;
+            await _boostClient.RequestBoostAndLaunch(game, BoostMode.Max);
         }
     }
 }

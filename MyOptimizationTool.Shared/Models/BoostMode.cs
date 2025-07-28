@@ -1,5 +1,5 @@
 ﻿// In folder: Models/BoostMode.cs
-namespace MyOptimizationTool.Models
+namespace MyOptimizationTool.Shared.Models
 {
     public enum BoostMode { Normal, Max }
 }

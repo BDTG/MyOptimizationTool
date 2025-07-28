@@ -1,7 +1,6 @@
 ﻿// In folder: ViewModels/SystemTweakerViewModel.cs
 using Microsoft.Win32;
-using MyOptimizationTool.Core;
-using MyOptimizationTool.Models;
+using MyOptimizationTool.Shared.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -9,17 +8,17 @@ namespace MyOptimizationTool.ViewModels
 {
     public class SystemTweakerViewModel
     {
-        private readonly TweakManager _tweakManager;
-        public ObservableCollection<SystemTweak> Tweaks { get; set; }
+        //private readonly TweakManager _tweakManager;
+        public ObservableCollection<SystemTweak> Tweaks { get; set; } = new();
 
-        public SystemTweakerViewModel()
+        /*public SystemTweakerViewModel()
         {
             _tweakManager = new TweakManager();
             Tweaks = new ObservableCollection<SystemTweak>();
             LoadTweaks();
-        }
+        }*/
 
-        private void LoadTweaks()
+        /*private void LoadTweaks()
         {
             Tweaks.Clear();
             var tweakList = new[]
@@ -46,8 +45,8 @@ namespace MyOptimizationTool.ViewModels
                     RegistryPath_Check = @"HKLM\SOFTWARE\Microsoft\FTH",
                     ValueName_Check = "Enabled",
                     EnabledValue_Check = 0
-                },*/
-                new SystemTweak
+                },
+        new SystemTweak
                 {
                     DisplayName = "Tắt Ứng dụng chạy nền (BackgroundAccess)",
                     Description = "Ngăn các ứng dụng WinRT truy cập tài nguyên ở chế độ nền.",
@@ -155,15 +154,15 @@ namespace MyOptimizationTool.ViewModels
                 _tweakManager.CheckTweakStatus(tweak);
                 Tweaks.Add(tweak);
             }
-        }
+        }*/
 
-        private void OnTweakPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        /*private void OnTweakPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(SystemTweak.IsApplied) && sender is SystemTweak tweak)
             {
                 // SỬA LỖI: Sử dụng tên đúng là '_tweakManager'
                 _tweakManager.ApplyTweak(tweak);
             }
-        }
+        }*/
     }
 }
